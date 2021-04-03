@@ -1,0 +1,73 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+# ---------- ---------- Type ---------- ----------
+
+type Todo {
+  id: ID!
+  text: String!
+  done: Boolean!
+  user: User!
+}
+
+type User {
+  id: ID!
+  name: String!
+}
+
+type PaymentAccount {
+  id: ID!
+  name: String!
+}
+
+type Item {
+  id: ID!
+  name: String!
+  # category: Category
+}
+
+type Transaction {
+  id: ID!
+  timestamp: Time!
+  accounts: [PaymentAccount!]!
+  items: [Item!]!
+}
+
+# ---------- ---------- Query ---------- ----------
+
+type Query {
+  todos: [Todo!]!
+  paymentAccount: [PaymentAccount!]!
+}
+
+# ---------- ---------- Input ---------- ----------
+
+input NewTodo {
+  text: String!
+  userId: String!
+}
+
+input NewPaymentAccount {
+  name: String!
+}
+
+input NewItem {
+  name: String!
+}
+
+# ---------- ---------- Mutation ---------- ----------
+
+type Mutation {
+  createTodo(input: NewTodo!): Todo!
+  createPaymentAccount(input: NewPaymentAccount!): PaymentAccount!
+}
+
+scalar Time
+
+# ---------- ---------- ---------- ---------- ---------- ---------- ----------
+
+# type Category {
+#   id: ID!
+#   name: String!
+# }
