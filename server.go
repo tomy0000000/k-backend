@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"tomy0000000/kman/k-graphql/graph"
-	"tomy0000000/kman/k-graphql/graph/db"
-	"tomy0000000/kman/k-graphql/graph/generated"
+	"tomy0000000/k/backend/graph"
+	"tomy0000000/k/backend/graph/db"
+	"tomy0000000/k/backend/graph/generated"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"

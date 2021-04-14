@@ -1,4 +1,4 @@
-module tomy0000000/kman/k-graphql
+module tomy0000000/k/backend
 
 go 1.16
 

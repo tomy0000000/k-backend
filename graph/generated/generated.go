@@ -10,7 +10,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	"tomy0000000/kman/k-graphql/graph/model"
+	"tomy0000000/k/backend/graph/model"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -399,7 +399,7 @@ func (ec *executionContext) field_Mutation_createPaymentAccount_args(ctx context
 	var arg0 model.NewPaymentAccount
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewPaymentAccount2tomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐNewPaymentAccount(ctx, tmp)
+		arg0, err = ec.unmarshalNNewPaymentAccount2tomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐNewPaymentAccount(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -414,7 +414,7 @@ func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, 
 	var arg0 model.NewTodo
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewTodo2tomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐNewTodo(ctx, tmp)
+		arg0, err = ec.unmarshalNNewTodo2tomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐNewTodo(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -585,7 +585,7 @@ func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.Todo)
 	fc.Result = res
-	return ec.marshalNTodo2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐTodo(ctx, field.Selections, res)
+	return ec.marshalNTodo2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐTodo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createPaymentAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -627,7 +627,7 @@ func (ec *executionContext) _Mutation_createPaymentAccount(ctx context.Context, 
 	}
 	res := resTmp.(*model.PaymentAccount)
 	fc.Result = res
-	return ec.marshalNPaymentAccount2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐPaymentAccount(ctx, field.Selections, res)
+	return ec.marshalNPaymentAccount2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐPaymentAccount(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PaymentAccount_id(ctx context.Context, field graphql.CollectedField, obj *model.PaymentAccount) (ret graphql.Marshaler) {
@@ -732,7 +732,7 @@ func (ec *executionContext) _Query_todos(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.Todo)
 	fc.Result = res
-	return ec.marshalNTodo2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐTodoᚄ(ctx, field.Selections, res)
+	return ec.marshalNTodo2ᚕᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐTodoᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_paymentAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -767,7 +767,7 @@ func (ec *executionContext) _Query_paymentAccount(ctx context.Context, field gra
 	}
 	res := resTmp.([]*model.PaymentAccount)
 	fc.Result = res
-	return ec.marshalNPaymentAccount2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐPaymentAccountᚄ(ctx, field.Selections, res)
+	return ec.marshalNPaymentAccount2ᚕᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐPaymentAccountᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -978,7 +978,7 @@ func (ec *executionContext) _Todo_user(ctx context.Context, field graphql.Collec
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Transaction_id(ctx context.Context, field graphql.CollectedField, obj *model.Transaction) (ret graphql.Marshaler) {
@@ -1083,7 +1083,7 @@ func (ec *executionContext) _Transaction_accounts(ctx context.Context, field gra
 	}
 	res := resTmp.([]*model.PaymentAccount)
 	fc.Result = res
-	return ec.marshalNPaymentAccount2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐPaymentAccountᚄ(ctx, field.Selections, res)
+	return ec.marshalNPaymentAccount2ᚕᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐPaymentAccountᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Transaction_items(ctx context.Context, field graphql.CollectedField, obj *model.Transaction) (ret graphql.Marshaler) {
@@ -1118,7 +1118,7 @@ func (ec *executionContext) _Transaction_items(ctx context.Context, field graphq
 	}
 	res := resTmp.([]*model.Item)
 	fc.Result = res
-	return ec.marshalNItem2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐItemᚄ(ctx, field.Selections, res)
+	return ec.marshalNItem2ᚕᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐItemᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -2912,7 +2912,7 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNItem2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Item) graphql.Marshaler {
+func (ec *executionContext) marshalNItem2ᚕᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Item) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2936,7 +2936,7 @@ func (ec *executionContext) marshalNItem2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbacke
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNItem2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐItem(ctx, sel, v[i])
+			ret[i] = ec.marshalNItem2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐItem(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2949,7 +2949,7 @@ func (ec *executionContext) marshalNItem2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbacke
 	return ret
 }
 
-func (ec *executionContext) marshalNItem2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐItem(ctx context.Context, sel ast.SelectionSet, v *model.Item) graphql.Marshaler {
+func (ec *executionContext) marshalNItem2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐItem(ctx context.Context, sel ast.SelectionSet, v *model.Item) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -2959,21 +2959,21 @@ func (ec *executionContext) marshalNItem2ᚖtomy0000000ᚋkmanᚋkmanᚑbackend�
 	return ec._Item(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNNewPaymentAccount2tomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐNewPaymentAccount(ctx context.Context, v interface{}) (model.NewPaymentAccount, error) {
+func (ec *executionContext) unmarshalNNewPaymentAccount2tomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐNewPaymentAccount(ctx context.Context, v interface{}) (model.NewPaymentAccount, error) {
 	res, err := ec.unmarshalInputNewPaymentAccount(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewTodo2tomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐNewTodo(ctx context.Context, v interface{}) (model.NewTodo, error) {
+func (ec *executionContext) unmarshalNNewTodo2tomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐNewTodo(ctx context.Context, v interface{}) (model.NewTodo, error) {
 	res, err := ec.unmarshalInputNewTodo(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNPaymentAccount2tomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐPaymentAccount(ctx context.Context, sel ast.SelectionSet, v model.PaymentAccount) graphql.Marshaler {
+func (ec *executionContext) marshalNPaymentAccount2tomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐPaymentAccount(ctx context.Context, sel ast.SelectionSet, v model.PaymentAccount) graphql.Marshaler {
 	return ec._PaymentAccount(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPaymentAccount2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐPaymentAccountᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PaymentAccount) graphql.Marshaler {
+func (ec *executionContext) marshalNPaymentAccount2ᚕᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐPaymentAccountᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PaymentAccount) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2997,7 +2997,7 @@ func (ec *executionContext) marshalNPaymentAccount2ᚕᚖtomy0000000ᚋkmanᚋkm
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNPaymentAccount2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐPaymentAccount(ctx, sel, v[i])
+			ret[i] = ec.marshalNPaymentAccount2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐPaymentAccount(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3010,7 +3010,7 @@ func (ec *executionContext) marshalNPaymentAccount2ᚕᚖtomy0000000ᚋkmanᚋkm
 	return ret
 }
 
-func (ec *executionContext) marshalNPaymentAccount2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐPaymentAccount(ctx context.Context, sel ast.SelectionSet, v *model.PaymentAccount) graphql.Marshaler {
+func (ec *executionContext) marshalNPaymentAccount2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐPaymentAccount(ctx context.Context, sel ast.SelectionSet, v *model.PaymentAccount) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3050,11 +3050,11 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalNTodo2tomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐTodo(ctx context.Context, sel ast.SelectionSet, v model.Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNTodo2tomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐTodo(ctx context.Context, sel ast.SelectionSet, v model.Todo) graphql.Marshaler {
 	return ec._Todo(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTodo2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐTodoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNTodo2ᚕᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐTodoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Todo) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3078,7 +3078,7 @@ func (ec *executionContext) marshalNTodo2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbacke
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTodo2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐTodo(ctx, sel, v[i])
+			ret[i] = ec.marshalNTodo2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐTodo(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3091,7 +3091,7 @@ func (ec *executionContext) marshalNTodo2ᚕᚖtomy0000000ᚋkmanᚋkmanᚑbacke
 	return ret
 }
 
-func (ec *executionContext) marshalNTodo2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐTodo(ctx context.Context, sel ast.SelectionSet, v *model.Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNTodo2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐTodo(ctx context.Context, sel ast.SelectionSet, v *model.Todo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3101,11 +3101,11 @@ func (ec *executionContext) marshalNTodo2ᚖtomy0000000ᚋkmanᚋkmanᚑbackend�
 	return ec._Todo(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUser2tomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2tomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚖtomy0000000ᚋkmanᚋkmanᚑbackendᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖtomy0000000ᚋkᚋbackendᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

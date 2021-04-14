@@ -7,9 +7,9 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"tomy0000000/kman/k-graphql/graph/db"
-	"tomy0000000/kman/k-graphql/graph/generated"
-	"tomy0000000/kman/k-graphql/graph/model"
+	"tomy0000000/k/backend/graph/db"
+	"tomy0000000/k/backend/graph/generated"
+	"tomy0000000/k/backend/graph/model"
 )
 
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {

@@ -4,7 +4,7 @@ import (
     "fmt"
     "time"
     "gorm.io/gorm"
-    "tomy0000000/kman/k-graphql/graph/model"
+    "tomy0000000/k/backend/graph/model"
 )
 
 type Transaction struct {

@@ -1,6 +1,6 @@
-# K GraphQL
+# K Backend
 
-The backend GraphQL API Server of K, written in go.
+The backend API server of K, served with GraphQL and written in go.
 
 ## Start Server
 
