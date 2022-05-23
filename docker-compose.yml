@@ -1,23 +1,21 @@
 services:
   k-backend:
-    command: "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    command: "uvicorn k_backend.main:app --host 0.0.0.0 --port 8000 --reload"
     container_name: "k_backend_app"
     depends_on:
       - "postgres"
     env_file:
-      - ".env"
+      - "instance/production.env"
     image: "tomy0000000/k-backend"
     networks:
       - "postgres_tunnel"
   postgres:
     container_name: "k_backend_db"
     env_file:
-      - ".env"
+      - "instance/production.env"
     image: "postgres:14"
     networks:
       - "postgres_tunnel"
-    ports:
-      - "5432:5432"
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
 

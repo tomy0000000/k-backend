@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
-from db import alembic_upgrade
-from routers import tw_invoice
+from .db import alembic_upgrade
+from .routers import tw_invoice
 
 app = FastAPI(
     title="K",
