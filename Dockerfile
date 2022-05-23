@@ -4,6 +4,7 @@ LABEL tech.tomy.docker.k.backend="0.1.0"
 LABEL maintainer="Tomy Hsieh @tomy0000000"
 
 WORKDIR /usr/src/k-backend
+EXPOSE 8000
 
 # Copy Application
 COPY . .

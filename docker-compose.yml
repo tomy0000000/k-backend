@@ -1,16 +1,14 @@
 services:
   k-backend:
-    build: .
     command: "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     container_name: "k_backend_app"
     depends_on:
       - "postgres"
     env_file:
       - ".env"
+    image: "tomy0000000/k-backend"
     networks:
       - "postgres_tunnel"
-    ports:
-      - "8000:8000"
   postgres:
     container_name: "k_backend_db"
     env_file:
