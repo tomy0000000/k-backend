@@ -106,7 +106,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            ${{ github.repository_owner }}/k-backend
+            ${{ secrets.DOCKER_USERNAME }}/k-backend
             ghcr.io/${{ github.repository_owner }}/k-backend
           tags: |
             type=edge
@@ -117,7 +117,7 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
-          username: ${{ github.repository_owner }}
+          username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Login to GitHub Container Registry
