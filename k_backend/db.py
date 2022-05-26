@@ -1,9 +1,8 @@
 import os
 
-from sqlmodel import create_engine
-
 from alembic import command
 from alembic.config import Config
+from sqlmodel import create_engine
 
 POSTGRES_USER = os.environ["POSTGRES_USER"]
 POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
@@ -18,3 +17,4 @@ engine = create_engine(POSTGRES_URI, echo=True)
 def alembic_upgrade():
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
+    print("Alembic upgrade completed.")
