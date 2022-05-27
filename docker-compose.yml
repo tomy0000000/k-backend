@@ -1,6 +1,6 @@
 services:
   k-backend:
-    command: "uvicorn k_backend.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: "uvicorn k_backend.main:app --host 0.0.0.0 --port 8000"
     container_name: "k_backend_app"
     depends_on:
       - "postgres"
