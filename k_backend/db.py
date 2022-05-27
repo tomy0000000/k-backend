@@ -2,6 +2,7 @@ import os
 
 from alembic import command
 from alembic.config import Config
+from loguru import logger
 from sqlmodel import create_engine
 
 POSTGRES_USER = os.environ["POSTGRES_USER"]
@@ -17,4 +18,4 @@ engine = create_engine(POSTGRES_URI, echo=True)
 def alembic_upgrade():
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
-    print("Alembic upgrade completed.")
+    logger.info("Alembic upgrade completed.")

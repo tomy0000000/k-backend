@@ -1,20 +1,28 @@
 import json
 import os
+import secrets
 from datetime import datetime, timedelta
 from pathlib import Path
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+from loguru import logger
 
 from .schemas.clients import Client
 
-SECRET_KEY = os.environ["SECRET_KEY"]
+SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_urlsafe(32))
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 CLIENTS_PATH = Path(__file__).parent.parent / "instance/clients.json"
-with open(CLIENTS_PATH) as f:
-    raw_clients = json.load(f)
+try:
+    with open(CLIENTS_PATH) as f:
+        raw_clients = json.load(f)
+except FileNotFoundError:
+    logger.warning(
+        f"Client file not configured, please configure one at {CLIENTS_PATH}"
+    )
+    raw_clients = {}
 CLIENTS = {client["name"]: Client(**client) for client in raw_clients}
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
