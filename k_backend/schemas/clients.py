@@ -1,11 +1,11 @@
-from pydantic import BaseModel
+from sqlmodel import SQLModel
 
 
-class Client(BaseModel):
+class Client(SQLModel):
     name: str
     password: str
 
 
-class Token(BaseModel):
+class Token(SQLModel):
     access_token: str
     token_type: str

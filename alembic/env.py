@@ -1,7 +1,7 @@
 from logging.config import fileConfig
 
 from k_backend.db import POSTGRES_URI
-from k_backend.schemas import tw_invoice
+from k_backend.schemas import *
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 

@@ -5,12 +5,16 @@ from alembic.config import Config
 from loguru import logger
 from sqlmodel import create_engine
 
-POSTGRES_USER = os.environ["POSTGRES_USER"]
-POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
-POSTGRES_HOST = os.environ["POSTGRES_HOST"]
-POSTGRES_PORT = os.environ["POSTGRES_PORT"]
-POSTGRES_DB = os.environ["POSTGRES_DB"]
-POSTGRES_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+try:
+    POSTGRES_USER = os.environ["POSTGRES_USER"]
+    POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
+    POSTGRES_HOST = os.environ["POSTGRES_HOST"]
+    POSTGRES_PORT = os.environ["POSTGRES_PORT"]
+    POSTGRES_DB = os.environ["POSTGRES_DB"]
+    POSTGRES_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+except KeyError:
+    logger.error("Postgres environment variables not configured.")
+    raise
 
 engine = create_engine(POSTGRES_URI, echo=True)
 
