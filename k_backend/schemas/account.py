@@ -3,13 +3,24 @@ from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel
 
 
-class Account(SQLModel, table=True):
-    __tablename__ = "account"
-    id: Optional[int] = Field(primary_key=True, nullable=False)
+class AccountBase(SQLModel):
     name: str
     currency_code: str = Field(foreign_key="currency.code", nullable=False)
     currency: str = Relationship(back_populates="accounts")
     transactions: List["Transaction"] = Relationship(back_populates="account")
+
+
+class Account(AccountBase, table=True):
+    __tablename__ = "account"
+    id: Optional[int] = Field(primary_key=True, nullable=False)
+
+
+class AccountCreate(AccountBase):
+    pass
+
+
+class AccountRead(AccountBase):
+    id: int
 
 
 class Currency(SQLModel, table=True):
