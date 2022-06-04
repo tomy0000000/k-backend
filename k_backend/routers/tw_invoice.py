@@ -16,7 +16,7 @@ tag = {
     },
 }
 
-router = APIRouter(
+invoice_router = APIRouter(
     prefix="/tw-invoice",
     tags=[tag["name"]],
     dependencies=[Depends(get_client)],
@@ -24,12 +24,13 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=List[tw_invoice.Invoice], tags=["Taiwan E-Invoice"])
+@invoice_router.post(
+    "", response_model=List[tw_invoice.Invoice], tags=["Taiwan E-Invoice"]
+)
 def create_invoice(invoices: List[tw_invoice.Invoice]):
     with Session(engine) as session:
         response = []
         for invoice in invoices:
-            print(invoice)
             session.add(invoice)
             session.commit()
             session.refresh(invoice)
@@ -38,14 +39,14 @@ def create_invoice(invoices: List[tw_invoice.Invoice]):
         return response
 
 
-@router.get("", tags=["Taiwan E-Invoice"])
+@invoice_router.get("", tags=["Taiwan E-Invoice"])
 def read_invoices():
     with Session(engine) as session:
         invoices = session.exec(select(tw_invoice.Invoice)).all()
         return invoices
 
 
-@router.patch("", tags=["Taiwan E-Invoice"])
+@invoice_router.patch("", tags=["Taiwan E-Invoice"])
 def update_invoice(invoice: tw_invoice.Invoice):
     with Session(engine) as session:
         session.merge(invoice)
@@ -54,7 +55,7 @@ def update_invoice(invoice: tw_invoice.Invoice):
         return invoice
 
 
-@router.post("/{number}", tags=["Taiwan E-Invoice"])
+@invoice_router.post("/{number}", tags=["Taiwan E-Invoice"])
 def create_invoice_details(
     number: str, invoice_details: List[tw_invoice.InvoiceDetail]
 ):
@@ -63,7 +64,6 @@ def create_invoice_details(
         for detail in invoice_details:
             if detail.invoice_number != number:
                 continue
-            print(detail)
             session.add(detail)
             session.commit()
             session.refresh(detail)
@@ -72,7 +72,7 @@ def create_invoice_details(
         return response
 
 
-@router.get("/{number}", tags=["Taiwan E-Invoice"])
+@invoice_router.get("/{number}", tags=["Taiwan E-Invoice"])
 def read_invoice_details(number: str):
     with Session(engine) as session:
         details = (

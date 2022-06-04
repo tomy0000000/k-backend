@@ -9,13 +9,13 @@ tag = {
     "description": "Authenticate and verify permissions",
 }
 
-router = APIRouter(
+auth_router = APIRouter(
     tags=[tag["name"]],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.post("/token", response_model=clients.Token)
+@auth_router.post("/token", response_model=clients.Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     client = authenticate_client(form_data.username, form_data.password)
     if not client:
@@ -28,6 +28,6 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/client", response_model=clients.Client)
+@auth_router.get("/client", response_model=clients.Client)
 async def check_auth(client: clients.Client = Depends(get_client)):
     return client

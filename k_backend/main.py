@@ -2,18 +2,21 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
 from .db import alembic_upgrade
-from .routers import auth, tw_invoice
+from .routers import routers
 
 app = FastAPI(
     title="K",
+    # version=, TODO: get version from pyproject.toml
     description="The All-in-One Financial Island",
     contact={"name": "Tomy Hsieh", "url": "https://github.com/tomy0000000"},
-    license_info={"name": "MIT", "url": "https://github.com/tomy0000000"},
-    openapi_tags=[auth.tag, tw_invoice.tag],
+    license_info={
+        "name": "MIT",
+        "url": "https://github.com/tomy0000000/K-Backend/blob/main/LICENSE",
+    },
 )
-app.include_router(auth.router)
-app.include_router(tw_invoice.router)
 
+for router in routers:
+    app.include_router(router)
 
 @app.on_event("startup")
 def on_startup():
