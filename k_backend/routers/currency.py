@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
 from ..auth import get_client
-from ..db import engine
+from ..db import get_session
 from ..schemas.account import Currency
 
 TAG_NAME = "Currency"
@@ -20,16 +20,14 @@ currency_router = APIRouter(
 
 
 @currency_router.post("", response_model=Currency, tags=[TAG_NAME])
-def create_currency(currency: Currency):
-    with Session(engine) as session:
-        session.add(currency)
-        session.commit()
-        session.refresh(currency)
-        return currency
+def create_currency(*, session: Session = Depends(get_session), currency: Currency):
+    session.add(currency)
+    session.commit()
+    session.refresh(currency)
+    return currency
 
 
 @currency_router.get("", response_model=Currency, tags=[TAG_NAME])
-def read_currencies():
-    with Session(engine) as session:
-        currencys = session.exec(select(Currency)).all()
-        return currencys
+def read_currencies(*, session: Session = Depends(get_session)):
+    currencys = session.exec(select(Currency)).all()
+    return currencys

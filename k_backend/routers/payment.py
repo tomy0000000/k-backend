@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
 from ..auth import get_client
-from ..db import engine, get_session
+from ..db import get_session
 from ..schemas.payment import (
     Payment,
     PaymentCreate,
