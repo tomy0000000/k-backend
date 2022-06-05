@@ -5,7 +5,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 class CategoryBase(SQLModel):
     name: str
-    description: str
+    description: Optional[str]
 
 
 class Category(CategoryBase, table=True):

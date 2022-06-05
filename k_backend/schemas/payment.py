@@ -26,7 +26,7 @@ class PaymentBase(SQLModel):
     timezone: PydanticTimezone = Field(
         sa_column=Column(SATimezone(), nullable=False), nullable=False
     )
-    description: str
+    description: Optional[str]
 
 
 class Payment(PaymentBase, table=True):
@@ -67,7 +67,7 @@ class PaymentEntryBase(SQLModel):
     category_id: int = Field(foreign_key="category.id", nullable=False)
     amount: float
     quantity: int
-    description: str
+    description: Optional[str]
 
 
 class PaymentEntry(PaymentEntryBase, table=True):
@@ -98,6 +98,7 @@ class TransactionBase(SQLModel):
     amount: float
     timestamp: Optional[datetime]
     timezone: Optional[PydanticTimezone]
+    description: Optional[str]
 
 
 class Transaction(TransactionBase, table=True):
