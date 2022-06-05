@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "k-backend"
-version = "0.2.0"
+version = "0.3.0"
 description = "The backend API server of K"
 authors = ["Tomy Hsieh <tomy0000000@gmail.com>"]
 license = "MIT"
