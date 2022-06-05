@@ -3,7 +3,7 @@ import os
 from alembic import command
 from alembic.config import Config
 from loguru import logger
-from sqlmodel import create_engine
+from sqlmodel import Session, create_engine
 
 try:
     POSTGRES_USER = os.environ["POSTGRES_USER"]
@@ -23,3 +23,8 @@ def alembic_upgrade():
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
     logger.info("Alembic upgrade completed.")
+
+
+def get_session():
+    with Session(engine) as session:
+        yield session

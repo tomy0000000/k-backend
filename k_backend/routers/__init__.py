@@ -9,5 +9,7 @@ routers = [
     auth_router,
     account_router,
     currency_router,
+    category_router,
+    payment_router,
     invoice_router,
 ]
