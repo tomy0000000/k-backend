@@ -92,12 +92,17 @@ class PaymentEntryRead(PaymentEntryBase):
 #
 
 
-class Transaction(SQLModel, table=True):
-
-    __tablename__ = "transaction"
+class TransactionBase(SQLModel):
     account_id: int = Field(primary_key=True, foreign_key="account.id", nullable=False)
-    payment_id: int = Field(primary_key=True, foreign_key="payment.id", nullable=False)
+    payment_id: Optional[int]
     amount: float
+    timestamp: Optional[datetime]
+    timezone: Optional[PydanticTimezone]
+
+
+class Transaction(TransactionBase, table=True):
+    __tablename__ = "transaction"
+    payment_id: int = Field(primary_key=True, foreign_key="payment.id", nullable=False)
     timestamp: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False), nullable=False
     )
@@ -107,14 +112,38 @@ class Transaction(SQLModel, table=True):
     account: "Account" = Relationship(back_populates="transactions")
     payment: Payment = Relationship(back_populates="transactions")
 
+    @root_validator
+    def verify_timezone(cls, values):
+        return create_timestamp_validator(values)
+
+
+class TransactionCreate(TransactionBase):
+    pass
+
+
+class TransactionRead(TransactionBase):
+    payment_id: int
+    timestamp: datetime
+    timezone: PydanticTimezone
+
+    @root_validator
+    def convert_timezone(cls, values):
+        return tz_timestamp_reader(values)
+
+    class Config:
+        json_encoders = EXTENDED_JSON_ENCODERS
+
 
 #
 # Relationship Models
 #
 
 
-class PaymentReadWithEntries(PaymentRead):
-    entries: list[PaymentEntryRead] = []
+class PaymentReadDetailed(PaymentRead):
+    """Includes transactions and entries."""
+
+    transactions: list[TransactionRead]
+    entries: list[PaymentEntryRead]
 
 
 from .account import Account

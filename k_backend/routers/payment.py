@@ -9,7 +9,9 @@ from ..schemas.payment import (
     PaymentEntry,
     PaymentEntryCreate,
     PaymentRead,
-    PaymentReadWithEntries,
+    PaymentReadDetailed,
+    Transaction,
+    TransactionCreate,
 )
 
 TAG_NAME = "Payment"
@@ -28,7 +30,7 @@ payment_router = APIRouter(
 
 @payment_router.post(
     "",
-    response_model=PaymentReadWithEntries,
+    response_model=PaymentReadDetailed,
     openapi_extra={
         "requestBody": {
             "content": {
@@ -42,6 +44,16 @@ payment_router = APIRouter(
                                     "timezone": "Asia/Taipei",
                                     "description": "Some payment description",
                                 },
+                                "transactions": [
+                                    {
+                                        "account_id": 2,
+                                        "amount": 60,
+                                    },
+                                    {
+                                        "account_id": 3,
+                                        "amount": 50,
+                                    },
+                                ],
                                 "entries": [
                                     {
                                         "category_id": 1,
@@ -74,10 +86,17 @@ def create_payment(
     *,
     session: Session = Depends(get_session),
     payment: PaymentCreate,
-    entries: list[PaymentEntryCreate]
+    transactions: list[TransactionCreate],
+    entries: list[PaymentEntryCreate],
 ):
     # Calculate total
-    payment.total = sum([entry.amount * entry.quantity for entry in entries])
+    entries_total = sum([entry.amount * entry.quantity for entry in entries])
+    transaction_total = sum([transaction.amount for transaction in transactions])
+    if entries_total != transaction_total:
+        raise ValueError(
+            f"Entries total {entries_total} does not match transaction total {transaction_total}"
+        )
+    payment.total = transaction_total
 
     # Store payment
     db_payment = Payment.from_orm(payment)
@@ -92,11 +111,20 @@ def create_payment(
         session.add(db_entry)
     session.commit()
 
+    # Store Transactions
+    for transaction in transactions:
+        transaction.payment_id = db_payment.id
+        transaction.timestamp = payment.timestamp
+        transaction.timezone = payment.timezone
+        db_transaction = Transaction.from_orm(transaction)
+        session.add(db_transaction)
+    session.commit()
+
     new_payment = session.get(Payment, db_payment.id)
     return new_payment
 
 
-@payment_router.get("", response_model=list[PaymentReadWithEntries])
+@payment_router.get("", response_model=list[PaymentReadDetailed])
 def read_payments(*, session: Session = Depends(get_session)):
     payments = session.exec(select(Payment)).all()
     return payments
@@ -110,7 +138,7 @@ def update_payment(*, session: Session = Depends(get_session), payment: Payment)
     return payment
 
 
-@payment_router.get("/{id}", response_model=PaymentReadWithEntries)
+@payment_router.get("/{id}", response_model=PaymentReadDetailed)
 def read_payment(*, session: Session = Depends(get_session), id: int):
     payment = session.query(Payment).get(id)
     return payment

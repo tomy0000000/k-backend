@@ -1,15 +1,19 @@
-from .account import account_router
-from .auth import auth_router
-from .category import category_router
-from .currency import currency_router
-from .payment import payment_router
-from .tw_invoice import invoice_router
+from . import account, auth, category, currency, payment, tw_invoice
 
 routers = [
-    auth_router,
-    account_router,
-    currency_router,
-    category_router,
-    payment_router,
-    invoice_router,
+    auth.auth_router,
+    account.account_router,
+    currency.currency_router,
+    category.category_router,
+    payment.payment_router,
+    tw_invoice.invoice_router,
+]
+
+tags = [
+    auth.tag,
+    account.tag,
+    currency.tag,
+    category.tag,
+    payment.tag,
+    tw_invoice.tag,
 ]
