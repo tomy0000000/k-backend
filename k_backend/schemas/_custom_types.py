@@ -49,7 +49,8 @@ def create_timestamp_validator(values):
         zone_offset = timezone.utcoffset(timestamp)
         if stamp_offset != zone_offset:
             raise ValueError(
-                f"Inconsistent timestamp offset ({stamp_offset}) and timezone offset ({zone_offset})"
+                f"Inconsistent timestamp offset ({stamp_offset})"
+                f" and timezone offset ({zone_offset})"
             )
     except KeyError:
         raise ValueError("Missing timestamp or timezone")

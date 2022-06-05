@@ -19,6 +19,7 @@ app = FastAPI(
 for router in routers:
     app.include_router(router)
 
+
 @app.on_event("startup")
 def on_startup():
     alembic_upgrade()

@@ -94,7 +94,8 @@ def create_payment(
     transaction_total = sum([transaction.amount for transaction in transactions])
     if entries_total != transaction_total:
         raise ValueError(
-            f"Entries total {entries_total} does not match transaction total {transaction_total}"
+            f"Entries total {entries_total} does not"
+            f" match transaction total {transaction_total}"
         )
     payment.total = transaction_total
 

@@ -31,4 +31,6 @@ class Currency(SQLModel, table=True):
     accounts: list[Account] = Relationship(back_populates="currency")
 
 
+# FIXME: Find away to prevent this
+# flake8: noqa
 from .payment import Transaction

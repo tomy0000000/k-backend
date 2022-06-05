@@ -22,4 +22,6 @@ class CategoryRead(CategoryBase):
     id: int
 
 
+# FIXME: Find away to prevent this
+# flake8: noqa
 from .payment import PaymentEntry

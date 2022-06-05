@@ -11,7 +11,10 @@ try:
     POSTGRES_HOST = os.environ["POSTGRES_HOST"]
     POSTGRES_PORT = os.environ["POSTGRES_PORT"]
     POSTGRES_DB = os.environ["POSTGRES_DB"]
-    POSTGRES_URI = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    POSTGRES_URI = (
+        f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
+        "@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    )
 except KeyError:
     logger.error("Postgres environment variables not configured.")
     raise

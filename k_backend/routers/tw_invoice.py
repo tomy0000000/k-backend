@@ -11,7 +11,8 @@ tag = {
     "description": "Store replica from MOF E-Invoice platform",
     "externalDocs": {
         "description": "電子發票應用API規格",
-        "url": "https://www.einvoice.nat.gov.tw/home/DownLoad?fileName=1510206773173_0.pdf",
+        "url": "https://www.einvoice.nat.gov.tw/home/DownLoad"
+        "?fileName=1510206773173_0.pdf",
     },
 }
 

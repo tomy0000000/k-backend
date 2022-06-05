@@ -147,5 +147,7 @@ class PaymentReadDetailed(PaymentRead):
     entries: list[PaymentEntryRead]
 
 
+# FIXME: Find away to prevent this
+# flake8: noqa
 from .account import Account
 from .category import Category
