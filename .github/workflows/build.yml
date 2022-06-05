@@ -5,7 +5,7 @@ on:
     branches:
       - "main"
     paths:
-      - "k-backend/**"
+      - "k_backend/**"
       - "pyproject.toml"
       - "poetry.lock"
   pull_request:
