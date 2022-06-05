@@ -29,7 +29,6 @@ payment_router = APIRouter(
 @payment_router.post(
     "",
     response_model=PaymentReadWithEntries,
-    tags=[TAG_NAME],
     openapi_extra={
         "requestBody": {
             "content": {
@@ -97,13 +96,13 @@ def create_payment(
     return new_payment
 
 
-@payment_router.get("", response_model=list[PaymentReadWithEntries], tags=[TAG_NAME])
+@payment_router.get("", response_model=list[PaymentReadWithEntries])
 def read_payments(*, session: Session = Depends(get_session)):
     payments = session.exec(select(Payment)).all()
     return payments
 
 
-@payment_router.patch("", response_model=PaymentRead, tags=[TAG_NAME])
+@payment_router.patch("", response_model=PaymentRead)
 def update_payment(*, session: Session = Depends(get_session), payment: Payment):
     session.merge(payment)
     session.commit()
@@ -111,13 +110,13 @@ def update_payment(*, session: Session = Depends(get_session), payment: Payment)
     return payment
 
 
-@payment_router.get("/{id}", response_model=PaymentReadWithEntries, tags=[TAG_NAME])
+@payment_router.get("/{id}", response_model=PaymentReadWithEntries)
 def read_payment(*, session: Session = Depends(get_session), id: int):
     payment = session.query(Payment).get(id)
     return payment
 
 
-@payment_router.delete("/{id}", tags=[TAG_NAME])
+@payment_router.delete("/{id}")
 def delete_payment(*, session: Session = Depends(get_session), id: int):
     payment = session.query(Payment).get(id)
     if payment is None:

@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
@@ -25,8 +23,8 @@ invoice_router = APIRouter(
 )
 
 
-@invoice_router.post("", response_model=List[Invoice], tags=["Taiwan E-Invoice"])
-def create_invoice(*, session: Session = Depends(get_session), invoices: List[Invoice]):
+@invoice_router.post("", response_model=list[Invoice])
+def create_invoice(*, session: Session = Depends(get_session), invoices: list[Invoice]):
     response = []
     for invoice in invoices:
         session.add(invoice)
@@ -37,13 +35,13 @@ def create_invoice(*, session: Session = Depends(get_session), invoices: List[In
     return response
 
 
-@invoice_router.get("", tags=["Taiwan E-Invoice"])
+@invoice_router.get("", response_model=list[Invoice])
 def read_invoices(*, session: Session = Depends(get_session)):
     invoices = session.exec(select(Invoice)).all()
     return invoices
 
 
-@invoice_router.patch("", tags=["Taiwan E-Invoice"])
+@invoice_router.patch("", response_model=Invoice)
 def update_invoice(*, session: Session = Depends(get_session), invoice: Invoice):
     session.merge(invoice)
     session.commit()
@@ -51,12 +49,12 @@ def update_invoice(*, session: Session = Depends(get_session), invoice: Invoice)
     return invoice
 
 
-@invoice_router.post("/{number}", tags=["Taiwan E-Invoice"])
+@invoice_router.post("/{number}", response_model=list[InvoiceDetail])
 def create_invoice_details(
     *,
     session: Session = Depends(get_session),
     number: str,
-    invoice_details: List[InvoiceDetail]
+    invoice_details: list[InvoiceDetail]
 ):
     response = []
     for detail in invoice_details:
@@ -70,7 +68,7 @@ def create_invoice_details(
     return response
 
 
-@invoice_router.get("/{number}", tags=["Taiwan E-Invoice"])
+@invoice_router.get("/{number}", response_model=list[InvoiceDetail])
 def read_invoice_details(*, session: Session = Depends(get_session), number: str):
     details = (
         session.query(InvoiceDetail).where(InvoiceDetail.invoice_number == number).all()

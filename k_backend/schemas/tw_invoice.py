@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -20,7 +20,7 @@ class Invoice(SQLModel, table=True):
     buyer_tax_id: Optional[str] = None
     currency: Optional[str] = None
     timestamp: datetime = Field(nullable=False)
-    details: List["InvoiceDetail"] = Relationship(back_populates="invoice")
+    details: list["InvoiceDetail"] = Relationship(back_populates="invoice")
 
 
 class InvoiceDetail(SQLModel, table=True):

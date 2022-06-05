@@ -20,7 +20,7 @@ account_router = APIRouter(
 )
 
 
-@account_router.post("", response_model=AccountRead, tags=[TAG_NAME])
+@account_router.post("", response_model=AccountRead)
 def create_account(*, session: Session = Depends(get_session), account: AccountCreate):
     try:
         db_account = Account.from_orm(account)
@@ -32,13 +32,13 @@ def create_account(*, session: Session = Depends(get_session), account: AccountC
         raise ValueError(f"Currency {db_account.currency_code} is not available")
 
 
-@account_router.get("", response_model=list[AccountRead], tags=[TAG_NAME])
+@account_router.get("", response_model=list[AccountRead])
 def read_accounts(*, session: Session = Depends(get_session)):
     accounts = session.exec(select(Account)).all()
     return accounts
 
 
-@account_router.patch("", response_model=AccountRead, tags=[TAG_NAME])
+@account_router.patch("", response_model=AccountRead)
 def update_account(*, session: Session = Depends(get_session), account: Account):
     session.merge(account)
     session.commit()
@@ -47,7 +47,7 @@ def update_account(*, session: Session = Depends(get_session), account: Account)
 
 
 # TODO: Think about how this should work
-# @account_router.delete("/{id}", tags=[TAG_NAME])
+# @account_router.delete("/{id}")
 # def delete_account(*, session: Session = Depends(get_session), id: int):
 #     account = session.query(Account).get(id)
 #     if account is None:

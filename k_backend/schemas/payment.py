@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import root_validator
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
@@ -33,8 +33,8 @@ class Payment(PaymentBase, table=True):
     __tablename__ = "payment"
     id: Optional[int] = Field(primary_key=True, nullable=False)
     total: float
-    transactions: List["Transaction"] = Relationship(back_populates="payment")
-    entries: List["PaymentEntry"] = Relationship(back_populates="payment")
+    transactions: list["Transaction"] = Relationship(back_populates="payment")
+    entries: list["PaymentEntry"] = Relationship(back_populates="payment")
 
 
 class PaymentCreate(PaymentBase):
@@ -114,7 +114,7 @@ class Transaction(SQLModel, table=True):
 
 
 class PaymentReadWithEntries(PaymentRead):
-    entries: List[PaymentEntryRead] = []
+    entries: list[PaymentEntryRead] = []
 
 
 from .account import Account

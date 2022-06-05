@@ -19,7 +19,7 @@ currency_router = APIRouter(
 )
 
 
-@currency_router.post("", response_model=Currency, tags=[TAG_NAME])
+@currency_router.post("", response_model=Currency)
 def create_currency(*, session: Session = Depends(get_session), currency: Currency):
     session.add(currency)
     session.commit()
@@ -27,7 +27,7 @@ def create_currency(*, session: Session = Depends(get_session), currency: Curren
     return currency
 
 
-@currency_router.get("", response_model=Currency, tags=[TAG_NAME])
+@currency_router.get("", response_model=Currency)
 def read_currencies(*, session: Session = Depends(get_session)):
     currencys = session.exec(select(Currency)).all()
     return currencys

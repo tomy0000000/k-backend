@@ -19,7 +19,7 @@ category_router = APIRouter(
 )
 
 
-@category_router.post("", response_model=CategoryRead, tags=[TAG_NAME])
+@category_router.post("", response_model=CategoryRead)
 def create_category(
     *, session: Session = Depends(get_session), category: CategoryCreate
 ):
@@ -30,13 +30,13 @@ def create_category(
     return db_category
 
 
-@category_router.get("", response_model=list[CategoryRead], tags=[TAG_NAME])
+@category_router.get("", response_model=list[CategoryRead])
 def read_categories(*, session: Session = Depends(get_session)):
     categories = session.exec(select(Category)).all()
     return categories
 
 
-@category_router.patch("", response_model=CategoryRead, tags=[TAG_NAME])
+@category_router.patch("", response_model=CategoryRead)
 def update_category(*, session: Session = Depends(get_session), category: Category):
     session.merge(category)
     session.commit()
@@ -45,7 +45,7 @@ def update_category(*, session: Session = Depends(get_session), category: Catego
 
 
 # TODO: Think about how this should work
-# @category_router.delete("/{id}", tags=[TAG_NAME])
+# @category_router.delete("/{id}")
 # def delete_category(*, session: Session = Depends(get_session), id: int):
 #     category = session.query(Category).get(id)
 #     if category is None:
