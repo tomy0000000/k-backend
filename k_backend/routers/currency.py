@@ -19,7 +19,48 @@ currency_router = APIRouter(
 )
 
 
-@currency_router.post("", response_model=Currency)
+@currency_router.post(
+    "",
+    response_model=Currency,
+    openapi_extra={
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "United States Dollar": {
+                            "summary": "United States Dollar",
+                            "value": {
+                                "code": "USD",
+                                "name": "United States Dollar",
+                                "symbol": "$",
+                            },
+                        },
+                        "Euro": {
+                            "summary": "Euro",
+                            "value": {"code": "EUR", "name": "Euro", "symbol": "€"},
+                        },
+                        "British Pound": {
+                            "summary": "British Pound",
+                            "value": {
+                                "code": "GBP",
+                                "name": "British Pound",
+                                "symbol": "£",
+                            },
+                        },
+                        "New Taiwan Dollar": {
+                            "summary": "New Taiwan Dollar",
+                            "value": {
+                                "code": "TWD",
+                                "name": "New Taiwan Dollar",
+                                "symbol": "NT$",
+                            },
+                        },
+                    }
+                }
+            }
+        }
+    },
+)
 def create_currency(*, session: Session = Depends(get_session), currency: Currency):
     session.add(currency)
     session.commit()
