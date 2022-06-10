@@ -21,10 +21,11 @@ from ._custom_types import (
 #
 
 
-class PaymentCategory(enum.Enum):
+class PaymentType(enum.Enum):
     Expense = "Expense"
     Income = "Income"
     Transfer = "Transfer"
+    Exchange = "Exchange"
 
 
 #
@@ -33,8 +34,8 @@ class PaymentCategory(enum.Enum):
 
 
 class PaymentBase(SQLModel):
-    category: PaymentCategory = Field(
-        sa_column=Column(sqlalchemy.Enum(PaymentCategory), nullable=False),
+    type: PaymentType = Field(
+        sa_column=Column(sqlalchemy.Enum(PaymentType), nullable=False),
         nullable=False,
     )
     timestamp: datetime = Field(

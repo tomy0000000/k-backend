@@ -23,6 +23,7 @@ account_router = APIRouter(
 @account_router.post("", response_model=AccountRead)
 def create_account(*, session: Session = Depends(get_session), account: AccountCreate):
     try:
+        account.balance = 0
         db_account = Account.from_orm(account)
         session.add(db_account)
         session.commit()

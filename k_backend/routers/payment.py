@@ -6,12 +6,12 @@ from ..auth import get_client
 from ..db import get_session
 from ..schemas.payment import (
     Payment,
-    PaymentCategory,
     PaymentCreate,
     PaymentEntry,
     PaymentEntryCreate,
     PaymentRead,
     PaymentReadDetailed,
+    PaymentType,
     Transaction,
     TransactionCreate,
 )
@@ -43,7 +43,7 @@ payment_router = APIRouter(
                             "summary": "Expense",
                             "value": {
                                 "payment": {
-                                    "category": "Expense",
+                                    "type": "Expense",
                                     "timestamp": "2022-09-08T08:07:08.000",
                                     "timezone": "Asia/Taipei",
                                     "description": "Some payment description",
@@ -84,7 +84,7 @@ payment_router = APIRouter(
                             "summary": "Income",
                             "value": {
                                 "payment": {
-                                    "category": "Income",
+                                    "type": "Income",
                                     "timestamp": "2022-09-08T08:07:08.000",
                                     "timezone": "Asia/Taipei",
                                     "description": "Some payment description",
@@ -125,13 +125,17 @@ payment_router = APIRouter(
                             "summary": "Transfer with fee",
                             "value": {
                                 "payment": {
-                                    "category": "Transfer",
+                                    "type": "Transfer",
                                     "timestamp": "2022-09-08T08:07:08.000",
                                     "timezone": "Asia/Taipei",
                                     "total": 60,
                                     "description": "Some payment description",
                                 },
                                 "transactions": [
+                                    {
+                                        "account_id": 1,
+                                        "amount": -14,
+                                    },
                                     {
                                         "account_id": 2,
                                         "amount": 60,
@@ -145,6 +149,40 @@ payment_router = APIRouter(
                                     {
                                         "category_id": 4,
                                         "amount": 14,
+                                        "quantity": 1,
+                                        "description": "Fee",
+                                    },
+                                ],
+                            },
+                        },
+                        "Exchange currency with fee": {
+                            "summary": "Exchange currency with fee",
+                            "value": {
+                                "payment": {
+                                    "type": "Exchange",
+                                    "timestamp": "2022-09-08T08:07:08.000",
+                                    "timezone": "Asia/Taipei",
+                                    "total": 100,
+                                    "description": "Some payment description",
+                                },
+                                "transactions": [
+                                    {
+                                        "account_id": 1,
+                                        "amount": -150,
+                                    },
+                                    {
+                                        "account_id": 2,
+                                        "amount": -3000,
+                                    },
+                                    {
+                                        "account_id": 4,
+                                        "amount": 100,
+                                    },
+                                ],
+                                "entries": [
+                                    {
+                                        "category_id": 4,
+                                        "amount": 150,
                                         "quantity": 1,
                                         "description": "Fee",
                                     },
@@ -165,7 +203,7 @@ def create_payment(
     entries: list[PaymentEntryCreate],
 ):
     # Calculate total
-    if payment.category in (PaymentCategory.Expense, PaymentCategory.Income):
+    if payment.type in (PaymentType.Expense, PaymentType.Income):
         if payment.total is not None:
             raise CustomValidationError(
                 "Total field is not allowed for expense or income",
@@ -180,14 +218,19 @@ def create_payment(
                 ("body", "__root__"),
             )
         payment.total = transaction_total
-    elif payment.category is PaymentCategory.Transfer:
+    elif payment.type is PaymentType.Transfer:
         if payment.total is None:
             raise CustomValidationError(
                 "Total field is required for transfer", ("body", "payment", "total")
             )
+    elif payment.type is PaymentType.Exchange:
+        if payment.total is None:
+            raise CustomValidationError(
+                "Total field is required for exchange", ("body", "payment", "total")
+            )
     else:
         raise CustomValidationError(
-            f"Unknown category {payment.category}", ("body", "payment", "category")
+            f"Unknown type {payment.type}", ("body", "payment", "type")
         )
 
     # Store payment
@@ -211,9 +254,13 @@ def create_payment(
                 f"Account with id: {transaction.account_id} does not exist",
                 ("body", "transactions", index, "account_id"),
             )
-        if payment.category is PaymentCategory.Expense:
+        if payment.type is PaymentType.Expense:
             account.balance -= transaction.amount
-        elif payment.category in (PaymentCategory.Income, PaymentCategory.Transfer):
+        elif payment.type in (
+            PaymentType.Income,
+            PaymentType.Transfer,
+            PaymentType.Exchange,
+        ):
             account.balance += transaction.amount
         session.add(account)
         # TODO: test what'll happen if two transactions with same account_id are added
