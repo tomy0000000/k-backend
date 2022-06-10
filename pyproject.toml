@@ -8,7 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.78.0"
-SQLAlchemy = "1.4.35"
+SQLAlchemy = "1.4.37"
 pydantic = "^1.9.1"
 sqlmodel = "^0.0.6"
 uvicorn = {extras = ["standard"], version = "^0.17.6"}
