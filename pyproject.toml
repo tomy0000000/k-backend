@@ -18,6 +18,7 @@ python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 python-multipart = "^0.0.5"
 loguru = "^0.6.0"
 tzdata = "^2022.1"
+simplejson = "^3.17.6"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"

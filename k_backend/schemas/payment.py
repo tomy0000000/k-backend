@@ -1,11 +1,12 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import Optional
 
 from pydantic import root_validator
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
+from ..util import PYDANTIC_JSON_ENCODERS
 from ._custom_types import (
-    EXTENDED_JSON_ENCODERS,
     PydanticTimezone,
     SATimezone,
     create_timestamp_validator,
@@ -32,13 +33,13 @@ class PaymentBase(SQLModel):
 class Payment(PaymentBase, table=True):
     __tablename__ = "payment"
     id: Optional[int] = Field(primary_key=True, nullable=False)
-    total: float
+    total: Decimal
     transactions: list["Transaction"] = Relationship(back_populates="payment")
     entries: list["PaymentEntry"] = Relationship(back_populates="payment")
 
 
 class PaymentCreate(PaymentBase):
-    total: Optional[float]
+    total: Optional[Decimal]
 
     @root_validator
     def verify_timezone(cls, values):
@@ -47,14 +48,14 @@ class PaymentCreate(PaymentBase):
 
 class PaymentRead(PaymentBase):
     id: int
-    total: float
+    total: Decimal
 
     @root_validator
     def convert_timezone(cls, values):
         return tz_timestamp_reader(values)
 
     class Config:
-        json_encoders = EXTENDED_JSON_ENCODERS
+        json_encoders = PYDANTIC_JSON_ENCODERS
 
 
 #
@@ -65,7 +66,7 @@ class PaymentRead(PaymentBase):
 class PaymentEntryBase(SQLModel):
     payment_id: Optional[int] = Field(foreign_key="payment.id", nullable=False)
     category_id: int = Field(foreign_key="category.id", nullable=False)
-    amount: float
+    amount: Decimal
     quantity: int
     description: Optional[str]
 
@@ -95,7 +96,7 @@ class PaymentEntryRead(PaymentEntryBase):
 class TransactionBase(SQLModel):
     account_id: int = Field(primary_key=True, foreign_key="account.id", nullable=False)
     payment_id: Optional[int]
-    amount: float
+    amount: Decimal
     timestamp: Optional[datetime]
     timezone: Optional[PydanticTimezone]
     description: Optional[str]
@@ -132,7 +133,7 @@ class TransactionRead(TransactionBase):
         return tz_timestamp_reader(values)
 
     class Config:
-        json_encoders = EXTENDED_JSON_ENCODERS
+        json_encoders = PYDANTIC_JSON_ENCODERS
 
 
 #

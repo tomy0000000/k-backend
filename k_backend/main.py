@@ -3,26 +3,24 @@ from fastapi.responses import RedirectResponse
 
 from .db import alembic_upgrade
 from .routers import routers, tags
+from .util import KustomJSONResponse
 
 app = FastAPI(
     title="K",
     description="The All-in-One Financial Island",
     # version=, TODO: get version from pyproject.toml
+    default_response_class=KustomJSONResponse,
+    openapi_tags=tags,
     contact={"name": "Tomy Hsieh", "url": "https://github.com/tomy0000000"},
     license_info={
         "name": "MIT",
         "url": "https://github.com/tomy0000000/K-Backend/blob/main/LICENSE",
     },
-    openapi_tags=tags,
 )
 
+app.add_event_handler("startup", alembic_upgrade)
 for router in routers:
     app.include_router(router)
-
-
-@app.on_event("startup")
-def on_startup():
-    alembic_upgrade()
 
 
 @app.get("/", include_in_schema=False)

@@ -3,8 +3,6 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from sqlalchemy.types import TypeDecorator
 from sqlmodel.sql.sqltypes import AutoString
 
-EXTENDED_JSON_ENCODERS = {ZoneInfo: lambda v: str(v)}
-
 
 class SATimezone(TypeDecorator):
     impl = AutoString

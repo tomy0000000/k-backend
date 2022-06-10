@@ -1,6 +1,9 @@
+from decimal import Decimal
 from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel
+
+from ..util import PYDANTIC_JSON_ENCODERS
 
 
 class AccountBase(SQLModel):
@@ -11,6 +14,7 @@ class AccountBase(SQLModel):
 class Account(AccountBase, table=True):
     __tablename__ = "account"
     id: Optional[int] = Field(primary_key=True, nullable=False)
+    balance: Decimal
     currency: "Currency" = Relationship(back_populates="accounts")
     transactions: list["Transaction"] = Relationship(back_populates="account")
 
@@ -21,6 +25,10 @@ class AccountCreate(AccountBase):
 
 class AccountRead(AccountBase):
     id: int
+    balance: Decimal
+
+    class Config:
+        json_encoders = PYDANTIC_JSON_ENCODERS
 
 
 class Currency(SQLModel, table=True):
