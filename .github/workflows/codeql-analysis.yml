@@ -9,8 +9,12 @@ name: "CodeQL"
 on:
   push:
     branches: [main]
+    paths:
+      - "k_backend/**"
   pull_request:
     branches: [main]
+    paths:
+      - "k_backend/**"
 
 jobs:
   analyze:
