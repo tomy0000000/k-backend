@@ -20,7 +20,7 @@ class Account(AccountBase, table=True):
 
 
 class AccountCreate(AccountBase):
-    pass
+    balance: Optional[Decimal]
 
 
 class AccountRead(AccountBase):

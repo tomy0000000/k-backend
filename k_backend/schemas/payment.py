@@ -1,8 +1,11 @@
+import enum
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
+import sqlalchemy
 from pydantic import root_validator
+from sqlalchemy import null
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
 from ..util import PYDANTIC_JSON_ENCODERS
@@ -14,11 +17,26 @@ from ._custom_types import (
 )
 
 #
+# Payment Category
+#
+
+
+class PaymentCategory(enum.Enum):
+    Expense = "Expense"
+    Income = "Income"
+    Transfer = "Transfer"
+
+
+#
 # Payment
 #
 
 
 class PaymentBase(SQLModel):
+    category: PaymentCategory = Field(
+        sa_column=Column(sqlalchemy.Enum(PaymentCategory), nullable=False),
+        nullable=False,
+    )
     timestamp: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False),
         nullable=False,
