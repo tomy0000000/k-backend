@@ -1,5 +1,5 @@
 name: Prepare Docker
-description: Setup Docker and login to Docker Hub and GitHub Container Registry
+description: Setup Docker, build, and push to Docker Hub and GHCR
 author: tomy0000000
 branding:
   icon: tool

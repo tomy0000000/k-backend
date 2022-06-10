@@ -112,7 +112,7 @@ jobs:
             type=edge
 
       - name: Build and Push Image
-        uses: ${{ github.repository }}/build-push-image@main
+        uses: ./.github/workflows/build-push-image.yml
 
   # deployment:
   #   name: Deploy to Beta
