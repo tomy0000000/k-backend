@@ -59,35 +59,19 @@ jobs:
         run: |
           flake8 k_backend
 
-  # license:
-  #   name: License Scan
-  #   runs-on: ubuntu-latest
-  #   if: ${{ github.event_path == 'pyproject.toml' || github.event_path == 'poetry.lock' }}
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+  license:
+    name: License Scan
+    runs-on: ubuntu-latest
+    if: ${{ github.event_path == 'pyproject.toml' || github.event_path == 'poetry.lock' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.8
-
-  #     - name: Install Dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install poetry
-  #         poetry config virtualenvs.create false
-  #         poetry install --no-interaction --no-ansi
-
-  #     - name: Export requirements.txt
-  #       run: |
-  #         poetry export --dev -f requirements.txt --output requirements.txt
-
-  #     # FOSSA's API Key are meant to be exposed as to doc
-  #     - name: Scan License
-  #       uses: fossa-contrib/fossa-action@v1
-  #       with:
-  #         fossa-api-key: 2d7865a44aa575d857521faaee1a57f8
+      # FOSSA's API Key are meant to be exposed as to doc
+      - name: Scan License
+        uses: fossas/fossa-action@main
+        with:
+          api-key: 2d7865a44aa575d857521faaee1a57f8
 
   build:
     name: Build and Push Image
@@ -95,11 +79,11 @@ jobs:
     needs: [test, style]
     if: |
       always() && (github.event_name != 'pull_request') &&
-      (needs.test.result == 'success') && (needs.style.result == 'success')
-    # (needs.license.result == 'success' || needs.license.result == 'skipped')
+      (needs.test.result == 'success') && (needs.style.result == 'success') &&
+      (needs.license.result == 'success' || needs.license.result == 'skipped')
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Read Docker Image Identifiers
         run: echo IMAGE_REPOSITORY=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
