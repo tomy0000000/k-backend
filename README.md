@@ -2,7 +2,9 @@
 
 <p align="left">
     <img src="https://img.shields.io/badge/python-3.10-blue.svg?logo=python" alt="Python 3.10" />
-    <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/tomy0000000/k-backend">
+    <a href="https://hub.docker.com/repository/docker/tomy0000000/k-backend">
+        <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/tomy0000000/k-backend">
+    </a>
     <a href="https://app.fossa.com/projects/git%2Bgithub.com%2Ftomy0000000%2FK-Backend?ref=badge_shield">
         <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftomy0000000%2FK-Backend.svg?type=shield" alt="LICENSE scan status" />
     </a>

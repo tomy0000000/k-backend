@@ -62,7 +62,6 @@ jobs:
   license:
     name: License Scan
     runs-on: ubuntu-latest
-    if: ${{ github.event_path == 'pyproject.toml' || github.event_path == 'poetry.lock' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
