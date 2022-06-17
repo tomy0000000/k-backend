@@ -84,16 +84,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Read Docker Image Identifiers
-        run: echo IMAGE_REPOSITORY=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
-
       - name: Set up Docker Meta
         id: meta
         uses: docker/metadata-action@v3
         with:
           images: |
-            ${{ env.IMAGE_REPOSITORY }}
-            ghcr.io/${{ env.IMAGE_REPOSITORY }}
+            ${{ github.repository }}
+            ghcr.io/${{ github.repository }}
           tags: |
             type=edge
 
