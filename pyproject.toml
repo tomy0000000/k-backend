@@ -27,6 +27,10 @@ ipython = "^8.4.0"
 flake8 = "^4.0.1"
 mypy = "^0.960"
 
+[tool.isort]
+profile = "black"
+src_paths = ["tubee", "migrations"]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

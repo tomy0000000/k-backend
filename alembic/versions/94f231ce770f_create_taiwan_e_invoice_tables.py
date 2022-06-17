@@ -1,7 +1,7 @@
 """Create Taiwan e-invoice tables
 
 Revision ID: 94f231ce770f
-Revises: 
+Revises:
 Create Date: 2022-05-23 02:16:26.121475
 
 """

@@ -26,7 +26,8 @@ def upgrade():
         "payment", sa.Column("category", payment_category_enum, nullable=True)
     )
     warnings.warn(
-        "Payment category is Non-nullable in next revision, please set it manually for all payments"
+        "Payment category is Non-nullable in next revision, "
+        "please set it manually for all payments"
     )
     # ### end Alembic commands ###
 
