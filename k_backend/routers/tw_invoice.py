@@ -3,7 +3,14 @@ from sqlmodel import Session, select
 
 from ..auth import get_client
 from ..db import get_session
-from ..schemas.tw_invoice import Invoice, InvoiceDetail
+from ..schemas.tw_invoice import (
+    Invoice,
+    InvoiceDetail,
+    InvoiceUpdated,
+    InvoiceWrite,
+    InvoiceWriteResponse,
+)
+from ..util import CustomValidationError
 
 TAG_NAME = "Taiwan E-Invoice"
 tag = {
@@ -24,15 +31,48 @@ invoice_router = APIRouter(
 )
 
 
-@invoice_router.post("", response_model=list[Invoice])
-def create_invoice(*, session: Session = Depends(get_session), invoices: list[Invoice]):
-    response = []
+@invoice_router.post("", response_model=InvoiceWriteResponse)
+def create_or_update_invoice(
+    *, session: Session = Depends(get_session), invoices: list[InvoiceWrite]
+):
+    """
+    Create or update invoices
+
+    New invoices will be returned with all details, while existing invoices will be
+    returned with only updated details.
+    Maximum upload per request is 100 invoices.
+    """
+    if len(invoices) > 100:
+        raise CustomValidationError(
+            "Maximum upload per request is 100 invoices", ("body")
+        )
+    created = []
+    updated = []
     for invoice in invoices:
-        session.add(invoice)
-        session.commit()
-        session.refresh(invoice)
-        response.append(invoice)
-        session.expunge(invoice)
+        db_invoice = session.get(Invoice, invoice.number)
+        if not db_invoice:
+            # Create new invoice
+            db_invoice = Invoice.from_orm(invoice)
+            session.add(db_invoice)
+            session.commit()
+            session.refresh(db_invoice)
+            created.append(db_invoice)
+            session.expunge(db_invoice)
+        else:
+            # Update existing invoice
+            new_invoice_data = invoice.dict(exclude_unset=True)
+            modified = {}
+            for key in new_invoice_data:
+                if getattr(db_invoice, key, None) != new_invoice_data[key]:
+                    setattr(db_invoice, key, new_invoice_data[key])
+                    modified[key] = new_invoice_data[key]
+            if not modified:
+                continue
+            session.add(db_invoice)
+            session.commit()
+            modified["number"] = invoice.number
+            updated.append(InvoiceUpdated(**modified))
+    response = InvoiceWriteResponse(created=created, updated=updated)
     return response
 
 
