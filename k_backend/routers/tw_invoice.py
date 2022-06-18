@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlmodel import Session, select
 
 from ..auth import get_client
@@ -6,6 +6,11 @@ from ..db import get_session
 from ..schemas.tw_invoice import (
     Invoice,
     InvoiceDetail,
+    InvoiceDetailRead,
+    InvoiceDetailUpdated,
+    InvoiceDetailWrite,
+    InvoiceDetailWriteResponse,
+    InvoiceRead,
     InvoiceUpdated,
     InvoiceWrite,
     InvoiceWriteResponse,
@@ -38,8 +43,8 @@ def create_or_update_invoice(
     """
     Create or update invoices
 
-    New invoices will be returned with all details, while existing invoices will be
-    returned with only updated details.
+    New invoices will be returned with all fields, while existing invoices will be
+    returned with only updated fields.
     Maximum upload per request is 100 invoices.
     """
     if len(invoices) > 100:
@@ -71,18 +76,18 @@ def create_or_update_invoice(
             session.add(db_invoice)
             session.commit()
             modified["number"] = invoice.number
-            updated.append(InvoiceUpdated(**modified))
+            updated.append(InvoiceUpdated.parse_obj(modified))
     response = InvoiceWriteResponse(created=created, updated=updated)
     return response
 
 
-@invoice_router.get("", response_model=list[Invoice])
+@invoice_router.get("", response_model=list[InvoiceRead])
 def read_invoices(*, session: Session = Depends(get_session)):
     invoices = session.exec(select(Invoice)).all()
     return invoices
 
 
-@invoice_router.patch("", response_model=Invoice)
+@invoice_router.patch("", response_model=InvoiceUpdated)
 def update_invoice(*, session: Session = Depends(get_session), invoice: Invoice):
     session.merge(invoice)
     session.commit()
@@ -90,26 +95,62 @@ def update_invoice(*, session: Session = Depends(get_session), invoice: Invoice)
     return invoice
 
 
-@invoice_router.post("/{number}", response_model=list[InvoiceDetail])
-def create_invoice_details(
+@invoice_router.post("/{number}", response_model=InvoiceDetailWriteResponse)
+def create_or_update_invoice_details(
     *,
     session: Session = Depends(get_session),
-    number: str,
-    invoice_details: list[InvoiceDetail]
+    number: str = Path(example="AB12345678"),
+    invoice_details: list[InvoiceDetailWrite]
 ):
-    response = []
+    """
+    Create or update invoice details
+
+    New details will be returned with all fields, while existing details will be
+    returned with only updated fields.
+    Maximum upload per request is 100 details.
+    """
+    if len(invoice_details) > 100:
+        raise CustomValidationError(
+            "Maximum upload per request is 100 details", ("body")
+        )
+    db_invoice = session.get(Invoice, number)
+    if not db_invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    created = []
+    updated = []
     for detail in invoice_details:
-        if detail.invoice_number != number:
-            continue
-        session.add(detail)
-        session.commit()
-        session.refresh(detail)
-        response.append(detail)
-        session.expunge(detail)
+        db_detail = session.get(
+            InvoiceDetail, {"invoice_number": number, "row_number": detail.row_number}
+        )
+        if not db_detail:
+            # Create new detail
+            detail.invoice_number = number
+            db_detail = InvoiceDetail.from_orm(detail)
+            session.add(db_detail)
+            session.commit()
+            session.refresh(db_detail)
+            created.append(db_detail)
+            session.expunge(db_detail)
+        else:
+            # Update existing detail
+            new_detail_data = detail.dict(exclude_unset=True)
+            modified = {}
+            for key in new_detail_data:
+                if getattr(db_detail, key, None) != new_detail_data[key]:
+                    setattr(db_detail, key, new_detail_data[key])
+                    modified[key] = new_detail_data[key]
+            if not modified:
+                continue
+            session.add(db_detail)
+            session.commit()
+            modified["invoice_number"] = number
+            modified["row_number"] = detail.row_number
+            updated.append(InvoiceDetailUpdated.parse_obj(modified))
+    response = InvoiceDetailWriteResponse(created=created, updated=updated)
     return response
 
 
-@invoice_router.get("/{number}", response_model=list[InvoiceDetail])
+@invoice_router.get("/{number}", response_model=list[InvoiceDetailRead])
 def read_invoice_details(*, session: Session = Depends(get_session), number: str):
     details = (
         session.query(InvoiceDetail).where(InvoiceDetail.invoice_number == number).all()
