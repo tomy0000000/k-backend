@@ -1,6 +1,6 @@
 FROM python:3.10.4
 
-LABEL tech.tomy.docker.k.backend="0.5.0"
+LABEL tech.tomy.docker.k.backend="0.6.0"
 LABEL maintainer="Tomy Hsieh @tomy0000000"
 
 WORKDIR /usr/src/k-backend

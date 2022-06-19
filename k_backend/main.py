@@ -8,7 +8,7 @@ from .util import KustomJSONResponse
 app = FastAPI(
     title="K",
     description="The All-in-One Financial Island",
-    # version=, TODO: get version from pyproject.toml
+    version="0.6.0",
     default_response_class=KustomJSONResponse,
     openapi_tags=tags,
     contact={"name": "Tomy Hsieh", "url": "https://github.com/tomy0000000"},
