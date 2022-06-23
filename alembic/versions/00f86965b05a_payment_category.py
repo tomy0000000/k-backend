@@ -8,6 +8,7 @@ Create Date: 2022-06-10 16:08:08.050576
 import warnings
 
 import sqlalchemy as sa
+
 from alembic import op
 
 # revision identifiers, used by Alembic.
