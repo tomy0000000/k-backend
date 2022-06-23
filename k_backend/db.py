@@ -1,9 +1,10 @@
 import os
 
-from alembic import command
-from alembic.config import Config
 from loguru import logger
 from sqlmodel import Session, create_engine
+
+from alembic import command
+from alembic.config import Config
 
 try:
     POSTGRES_USER = os.environ["POSTGRES_USER"]
