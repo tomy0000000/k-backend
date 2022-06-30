@@ -5,7 +5,6 @@ from typing import Optional
 
 import sqlalchemy
 from pydantic import root_validator
-from sqlalchemy import null
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
 from ..util import PYDANTIC_JSON_ENCODERS
@@ -119,6 +118,7 @@ class TransactionBase(SQLModel):
     timestamp: Optional[datetime]
     timezone: Optional[PydanticTimezone]
     description: Optional[str]
+    reconcile: bool = Field(nullable=False, default=False)
 
 
 class Transaction(TransactionBase, table=True):
