@@ -7,6 +7,7 @@ Create Date: 2022-05-30 11:37:20.922466
 """
 import sqlalchemy as sa
 from alembic import op
+
 from k_backend.schemas._custom_types import SATimezone
 
 # revision identifiers, used by Alembic.
