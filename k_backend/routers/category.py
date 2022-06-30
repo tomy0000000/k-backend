@@ -3,7 +3,12 @@ from sqlmodel import Session, select
 
 from ..auth import get_client
 from ..db import get_session
-from ..schemas.category import Category, CategoryCreate, CategoryRead
+from ..schemas.category import (
+    Category,
+    CategoryCreate,
+    CategoryRead,
+    CategoryReadWithChildren,
+)
 
 TAG_NAME = "Category"
 tag = {
@@ -30,10 +35,18 @@ def create_category(
     return db_category
 
 
-@category_router.get("", response_model=list[CategoryRead])
+@category_router.get("", response_model=list[CategoryReadWithChildren])
 def read_categories(*, session: Session = Depends(get_session)):
-    categories = session.exec(select(Category)).all()
+    categories = session.exec(
+        select(Category).where(Category.parent_id.is_(None))
+    ).all()
     return categories
+
+
+@category_router.get("/{id}", response_model=CategoryReadWithChildren)
+def read_category(*, session: Session = Depends(get_session), id: int):
+    category = session.query(Category).get(id)
+    return category
 
 
 @category_router.patch("", response_model=CategoryRead)
