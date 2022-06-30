@@ -15,7 +15,6 @@ from ..schemas.tw_invoice import (
     InvoiceWrite,
     InvoiceWriteResponse,
 )
-from ..util import CustomValidationError
 
 TAG_NAME = "Taiwan E-Invoice"
 tag = {
@@ -45,12 +44,7 @@ def create_or_update_invoice(
 
     New invoices will be returned with all fields, while existing invoices will be
     returned with only updated fields.
-    Maximum upload per request is 100 invoices.
     """
-    if len(invoices) > 100:
-        raise CustomValidationError(
-            "Maximum upload per request is 100 invoices", ("body")
-        )
     created = []
     updated = []
     for invoice in invoices:
@@ -107,12 +101,7 @@ def create_or_update_invoice_details(
 
     New details will be returned with all fields, while existing details will be
     returned with only updated fields.
-    Maximum upload per request is 100 details.
     """
-    if len(invoice_details) > 100:
-        raise CustomValidationError(
-            "Maximum upload per request is 100 details", ("body")
-        )
     db_invoice = session.get(Invoice, number)
     if not db_invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
