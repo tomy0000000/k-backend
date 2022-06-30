@@ -29,6 +29,7 @@ mypy = "^0.960"
 
 [tool.isort]
 profile = "black"
+src_paths = ["k_backend"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
