@@ -119,6 +119,8 @@ class TransactionBase(SQLModel):
     timezone: Optional[PydanticTimezone]
     description: Optional[str]
     reconcile: bool = Field(nullable=False, default=False)
+    psp_id: Optional[int] = Field(foreign_key="payment_service_providers.id")
+    psp_reconcile: Optional[bool] = Field(nullable=False, default=False)
 
 
 class Transaction(TransactionBase, table=True):
@@ -132,6 +134,7 @@ class Transaction(TransactionBase, table=True):
     )
     account: "Account" = Relationship(back_populates="transactions")
     payment: Payment = Relationship(back_populates="transactions")
+    psp: Optional["PSP"] = Relationship(back_populates="transactions")
 
     @root_validator
     def verify_timezone(cls, values):
@@ -171,3 +174,4 @@ class PaymentReadDetailed(PaymentRead):
 # flake8: noqa
 from .account import Account
 from .category import Category
+from .psp import PSP
