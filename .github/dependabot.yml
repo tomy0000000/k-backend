@@ -12,6 +12,12 @@ updates:
     assignees:
       - "tomy0000000"
     commit-message:
-      prefix: "🧹 chore: "
-    reviewers:
+      prefix: "🗄 chore: "
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    assignees:
       - "tomy0000000"
+    commit-message:
+      prefix: "🗄 chore: "
