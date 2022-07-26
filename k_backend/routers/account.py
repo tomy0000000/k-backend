@@ -20,8 +20,8 @@ account_router = APIRouter(
 )
 
 
-@account_router.post("", response_model=AccountRead)
-def create_account(*, session: Session = Depends(get_session), account: AccountCreate):
+@account_router.post("", name="Create Account", response_model=AccountRead)
+def create(*, session: Session = Depends(get_session), account: AccountCreate):
     try:
         account.balance = 0
         db_account = Account.from_orm(account)
@@ -33,14 +33,14 @@ def create_account(*, session: Session = Depends(get_session), account: AccountC
         raise ValueError(f"Currency {db_account.currency_code} is not available")
 
 
-@account_router.get("", response_model=list[AccountRead])
-def read_accounts(*, session: Session = Depends(get_session)):
+@account_router.get("", name="Read Accounts", response_model=list[AccountRead])
+def reads(*, session: Session = Depends(get_session)):
     accounts = session.exec(select(Account)).all()
     return accounts
 
 
-@account_router.patch("", response_model=AccountRead)
-def update_account(*, session: Session = Depends(get_session), account: Account):
+@account_router.patch("", name="Update Account", response_model=AccountRead)
+def update(*, session: Session = Depends(get_session), account: Account):
     session.merge(account)
     session.commit()
     session.refresh(account)

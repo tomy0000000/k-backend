@@ -35,8 +35,10 @@ invoice_router = APIRouter(
 )
 
 
-@invoice_router.post("", response_model=InvoiceWriteResponse)
-def create_or_update_invoice(
+@invoice_router.post(
+    "", name="Create or Update Invoices", response_model=InvoiceWriteResponse
+)
+def create_or_update(
     *, session: Session = Depends(get_session), invoices: list[InvoiceWrite]
 ):
     """
@@ -75,22 +77,26 @@ def create_or_update_invoice(
     return response
 
 
-@invoice_router.get("", response_model=list[InvoiceRead])
-def read_invoices(*, session: Session = Depends(get_session)):
+@invoice_router.get("", name="Read Invoices", response_model=list[InvoiceRead])
+def reads(*, session: Session = Depends(get_session)):
     invoices = session.exec(select(Invoice)).all()
     return invoices
 
 
-@invoice_router.patch("", response_model=InvoiceUpdated)
-def update_invoice(*, session: Session = Depends(get_session), invoice: Invoice):
+@invoice_router.patch("", name="Update Invoice", response_model=InvoiceUpdated)
+def update(*, session: Session = Depends(get_session), invoice: Invoice):
     session.merge(invoice)
     session.commit()
     session.refresh(invoice)
     return invoice
 
 
-@invoice_router.post("/{number}", response_model=InvoiceDetailWriteResponse)
-def create_or_update_invoice_details(
+@invoice_router.post(
+    "/{number}",
+    name="Create or Update Invoice Details",
+    response_model=InvoiceDetailWriteResponse,
+)
+def create_or_update_details(
     *,
     session: Session = Depends(get_session),
     number: str = Path(example="AB12345678"),
@@ -139,8 +145,10 @@ def create_or_update_invoice_details(
     return response
 
 
-@invoice_router.get("/{number}", response_model=list[InvoiceDetailRead])
-def read_invoice_details(*, session: Session = Depends(get_session), number: str):
+@invoice_router.get(
+    "/{number}", name="Read Invoice Details", response_model=list[InvoiceDetailRead]
+)
+def read_details(*, session: Session = Depends(get_session), number: str):
     details = (
         session.query(InvoiceDetail).where(InvoiceDetail.invoice_number == number).all()
     )

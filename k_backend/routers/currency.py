@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Body, Depends
 from sqlmodel import Session, select
 
 from ..auth import get_client
@@ -18,57 +18,41 @@ currency_router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+EXAMPLES = {
+    "create": {
+        "United States Dollar": {
+            "summary": "United States Dollar",
+            "value": {"code": "USD", "name": "United States Dollar", "symbol": "$"},
+        },
+        "Euro": {
+            "summary": "Euro",
+            "value": {"code": "EUR", "name": "Euro", "symbol": "€"},
+        },
+        "British Pound": {
+            "summary": "British Pound",
+            "value": {"code": "GBP", "name": "British Pound", "symbol": "£"},
+        },
+        "New Taiwan Dollar": {
+            "summary": "New Taiwan Dollar",
+            "value": {"code": "TWD", "name": "New Taiwan Dollar", "symbol": "NT$"},
+        },
+    }
+}
 
-@currency_router.post(
-    "",
-    response_model=Currency,
-    openapi_extra={
-        "requestBody": {
-            "content": {
-                "application/json": {
-                    "examples": {
-                        "United States Dollar": {
-                            "summary": "United States Dollar",
-                            "value": {
-                                "code": "USD",
-                                "name": "United States Dollar",
-                                "symbol": "$",
-                            },
-                        },
-                        "Euro": {
-                            "summary": "Euro",
-                            "value": {"code": "EUR", "name": "Euro", "symbol": "€"},
-                        },
-                        "British Pound": {
-                            "summary": "British Pound",
-                            "value": {
-                                "code": "GBP",
-                                "name": "British Pound",
-                                "symbol": "£",
-                            },
-                        },
-                        "New Taiwan Dollar": {
-                            "summary": "New Taiwan Dollar",
-                            "value": {
-                                "code": "TWD",
-                                "name": "New Taiwan Dollar",
-                                "symbol": "NT$",
-                            },
-                        },
-                    }
-                }
-            }
-        }
-    },
-)
-def create_currency(*, session: Session = Depends(get_session), currency: Currency):
+
+@currency_router.post("", name="Create Currency", response_model=Currency)
+def create(
+    *,
+    session: Session = Depends(get_session),
+    currency: Currency = Body(examples=EXAMPLES["create"])
+):
     session.add(currency)
     session.commit()
     session.refresh(currency)
     return currency
 
 
-@currency_router.get("", response_model=Currency)
-def read_currencies(*, session: Session = Depends(get_session)):
-    currencys = session.exec(select(Currency)).all()
-    return currencys
+@currency_router.get("", name="Read Currencies", response_model=list[Currency])
+def reads(*, session: Session = Depends(get_session)):
+    currencies = session.exec(select(Currency)).all()
+    return currencies

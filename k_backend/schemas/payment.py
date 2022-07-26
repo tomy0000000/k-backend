@@ -170,6 +170,20 @@ class PaymentReadDetailed(PaymentRead):
     entries: list[PaymentEntryRead]
 
 
+#
+# Composite Models
+# For direct use in the API
+#
+
+
+class PaymentCreateDetailed(SQLModel):
+    """Includes transactions and entries."""
+
+    payment: PaymentCreate
+    transactions: list[TransactionCreate]
+    entries: list[PaymentEntryCreate]
+
+
 # FIXME: Find away to prevent this
 # flake8: noqa
 from .account import Account

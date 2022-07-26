@@ -15,8 +15,8 @@ auth_router = APIRouter(
 )
 
 
-@auth_router.post("/token", response_model=clients.Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+@auth_router.post("/token", name="Login", response_model=clients.Token)
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     client = authenticate_client(form_data.username, form_data.password)
     if not client:
         raise HTTPException(
@@ -28,6 +28,6 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@auth_router.get("/client", response_model=clients.Client)
-async def check_auth(client: clients.Client = Depends(get_client)):
+@auth_router.get("/client", name="Check Credential", response_model=clients.Client)
+async def check_credential(client: clients.Client = Depends(get_client)):
     return client

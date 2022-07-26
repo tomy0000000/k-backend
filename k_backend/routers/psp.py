@@ -19,8 +19,8 @@ psp_router = APIRouter(
 )
 
 
-@psp_router.post("", response_model=PSPRead)
-def create_psp(*, session: Session = Depends(get_session), psp: PSPCreate):
+@psp_router.post("", name="Create Payment Service Provider", response_model=PSPRead)
+def create(*, session: Session = Depends(get_session), psp: PSPCreate):
     db_psp = PSP.from_orm(psp)
     session.add(db_psp)
     session.commit()
@@ -28,7 +28,7 @@ def create_psp(*, session: Session = Depends(get_session), psp: PSPCreate):
     return db_psp
 
 
-@psp_router.get("", response_model=list[PSPRead])
-def read_psps(*, session: Session = Depends(get_session)):
+@psp_router.get("", name="Read Payment Service Providers", response_model=list[PSPRead])
+def reads(*, session: Session = Depends(get_session)):
     psps = session.exec(select(PSP)).all()
     return psps

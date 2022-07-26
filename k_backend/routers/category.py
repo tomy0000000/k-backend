@@ -24,10 +24,8 @@ category_router = APIRouter(
 )
 
 
-@category_router.post("", response_model=CategoryRead)
-def create_category(
-    *, session: Session = Depends(get_session), category: CategoryCreate
-):
+@category_router.post("", name="Create Category", response_model=CategoryRead)
+def create(*, session: Session = Depends(get_session), category: CategoryCreate):
     db_category = Category.from_orm(category)
     session.add(db_category)
     session.commit()
@@ -35,22 +33,26 @@ def create_category(
     return db_category
 
 
-@category_router.get("", response_model=list[CategoryReadWithChildren])
-def read_categories(*, session: Session = Depends(get_session)):
+@category_router.get(
+    "", name="Read Categories", response_model=list[CategoryReadWithChildren]
+)
+def reads(*, session: Session = Depends(get_session)):
     categories = session.exec(
         select(Category).where(Category.parent_id.is_(None))
     ).all()
     return categories
 
 
-@category_router.get("/{id}", response_model=CategoryReadWithChildren)
-def read_category(*, session: Session = Depends(get_session), id: int):
+@category_router.get(
+    "/{id}", name="Read Category", response_model=CategoryReadWithChildren
+)
+def read(*, session: Session = Depends(get_session), id: int):
     category = session.query(Category).get(id)
     return category
 
 
-@category_router.patch("", response_model=CategoryRead)
-def update_category(*, session: Session = Depends(get_session), category: Category):
+@category_router.patch("", name="Update Category", response_model=CategoryRead)
+def update(*, session: Session = Depends(get_session), category: Category):
     session.merge(category)
     session.commit()
     session.refresh(category)
