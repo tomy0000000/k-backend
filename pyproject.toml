@@ -24,7 +24,7 @@ simplejson = "^3.17.6"
 black = "^22.6.0"
 isort = "^5.10.1"
 ipython = "^8.4.0"
-flake8 = "^4.0.1"
+flake8 = "^5.0.3"
 mypy = "^0.971"
 
 [tool.isort]
