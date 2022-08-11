@@ -9,7 +9,7 @@ license = "MIT"
 python = "^3.10"
 fastapi = "^0.79.0"
 SQLAlchemy = "1.4.35"
-pydantic = "^1.9.1"
+pydantic = "^1.9.2"
 sqlmodel = "^0.0.6"
 uvicorn = {extras = ["standard"], version = "^0.18.2"}
 psycopg2 = "^2.9.3"
