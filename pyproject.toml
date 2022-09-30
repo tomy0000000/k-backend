@@ -25,7 +25,7 @@ black = "^22.6.0"
 isort = "^5.10.1"
 ipython = "^8.4.0"
 flake8 = "^5.0.4"
-mypy = "^0.971"
+mypy = "^0.981"
 
 [tool.isort]
 profile = "black"
