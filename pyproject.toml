@@ -12,7 +12,7 @@ SQLAlchemy = "1.4.41"
 pydantic = "^1.10.2"
 sqlmodel = "^0.0.8"
 uvicorn = {extras = ["standard"], version = "^0.18.2"}
-psycopg2 = "^2.9.3"
+psycopg2 = "^2.9.4"
 alembic = "^1.8.1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 python-multipart = "^0.0.5"
