@@ -21,7 +21,7 @@ tzdata = "^2022.4"
 simplejson = "^3.17.6"
 
 [tool.poetry.dev-dependencies]
-black = "^22.8.0"
+black = "^22.12.0"
 isort = "^5.10.1"
 ipython = "^8.5.0"
 flake8 = "^5.0.4"
