@@ -2,7 +2,7 @@
 name = "k-backend"
 version = "0.7.0"
 description = "The backend API server of K"
-authors = ["Tomy Hsieh <tomy0000000@gmail.com>"]
+authors = ["Tomy Hsieh <pypi@tomy.me>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
