@@ -25,7 +25,7 @@ jobs:
             type=semver,pattern={{version}}
 
       - name: Build and Push Image
-        uses: ./.github/actions/build-push-image
+        uses: tomy0000000/actions/build-push-image@main
         with:
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           tags: ${{ steps.meta.outputs.tags }}
