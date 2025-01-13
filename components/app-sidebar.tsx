@@ -15,6 +15,11 @@ const links = [
     href: "/account",
     icon: <Icon icon="mdi:account-balance-wallet" />,
   },
+  {
+    label: "Category",
+    href: "/category",
+    icon: <Icon icon="mdi:category" />,
+  },
 ];
 export default function AppSidebar() {
   const [open, setOpen] = useState(false);
