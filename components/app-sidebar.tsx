@@ -15,11 +15,6 @@ const links = [
     href: "/account",
     icon: <Icon icon="mdi:account-balance-wallet" />,
   },
-  {
-    label: "Setting",
-    href: "/setting",
-    icon: <Icon icon="mdi:settings" />,
-  },
 ];
 export default function AppSidebar() {
   const [open, setOpen] = useState(false);
@@ -40,7 +35,7 @@ export default function AppSidebar() {
           <SidebarLink
             link={{
               label: "Tomy Hsieh",
-              href: "#",
+              href: "/setting",
               icon: (
                 <Image
                   src="https://img.tomy.me/tomy-light.png"
