@@ -1,34 +1,24 @@
 import Logo from "@/components/logo";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
-import {
-  IconBrandTabler,
-  IconSettings,
-  IconUserBolt,
-} from "@tabler/icons-react";
 import Image from "next/image";
 import { useState } from "react";
+import { Icon } from "@iconify-icon/react";
 
 const links = [
   {
     label: "Calendar",
     href: "/",
-    icon: (
-      <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-    ),
+    icon: <Icon icon="mdi:calendar" />,
   },
   {
-    label: "Accounts",
-    href: "/accounts",
-    icon: (
-      <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-    ),
+    label: "Account",
+    href: "/account",
+    icon: <Icon icon="mdi:account-balance-wallet" />,
   },
   {
-    label: "Settings",
-    href: "/settings",
-    icon: (
-      <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-    ),
+    label: "Setting",
+    href: "/setting",
+    icon: <Icon icon="mdi:settings" />,
   },
 ];
 export default function AppSidebar() {
