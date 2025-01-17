@@ -1,4 +1,4 @@
-FROM python:3.10.4
+FROM python:3.12
 
 LABEL tech.tomy.docker.k.backend="0.7.0"
 LABEL maintainer="Tomy Hsieh @tomy0000000"
