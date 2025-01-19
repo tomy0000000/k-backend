@@ -272,8 +272,13 @@ def create(
 
 
 @payment_router.get("", name="Read Payments", response_model=list[PaymentReadDetailed])
-def reads(*, session: Session = Depends(get_session), payment_date: date = None):
-    return get_payments(session, payment_date)
+def reads(
+    *,
+    session: Session = Depends(get_session),
+    payment_date: date | None = None,
+    category_id: int | None = None,
+):
+    return get_payments(session, payment_date, category_id)
 
 
 @payment_router.patch("", name="Update Payment", response_model=PaymentRead)
