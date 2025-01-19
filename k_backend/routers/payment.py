@@ -1,6 +1,9 @@
-from fastapi import APIRouter, Body, Depends, HTTPException
-from sqlmodel import Session, select
+from datetime import date
 
+from fastapi import APIRouter, Body, Depends, HTTPException
+from sqlmodel import Session
+
+from k_backend.crud.payment import get_payments
 from k_backend.schemas.account import Account
 
 from ..auth import get_client
@@ -269,9 +272,8 @@ def create(
 
 
 @payment_router.get("", name="Read Payments", response_model=list[PaymentReadDetailed])
-def reads(*, session: Session = Depends(get_session)):
-    payments = session.exec(select(Payment)).all()
-    return payments
+def reads(*, session: Session = Depends(get_session), payment_date: date = None):
+    return get_payments(session, payment_date)
 
 
 @payment_router.patch("", name="Update Payment", response_model=PaymentRead)
