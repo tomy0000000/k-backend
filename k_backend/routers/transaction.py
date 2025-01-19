@@ -13,7 +13,7 @@ tag = {
 }
 
 txn_router = APIRouter(
-    prefix="/transaction",
+    prefix="/transactions",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},

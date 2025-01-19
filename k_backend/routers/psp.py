@@ -12,7 +12,7 @@ tag = {
 }
 
 psp_router = APIRouter(
-    prefix="/psp",
+    prefix="/psps",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},

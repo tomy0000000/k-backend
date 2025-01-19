@@ -17,7 +17,7 @@ tag = {
 }
 
 category_router = APIRouter(
-    prefix="/category",
+    prefix="/categories",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},

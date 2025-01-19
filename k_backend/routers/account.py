@@ -13,7 +13,7 @@ tag = {
 }
 
 account_router = APIRouter(
-    prefix="/account",
+    prefix="/accounts",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},

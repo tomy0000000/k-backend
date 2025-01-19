@@ -26,7 +26,7 @@ tag = {
 }
 
 payment_router = APIRouter(
-    prefix="/payment",
+    prefix="/payments",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},
