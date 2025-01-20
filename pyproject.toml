@@ -8,9 +8,9 @@ requires-python = ">=3.12,<4.0.0"
 authors = [{ name = "Tomy Hsieh", email = "pypi@tomy.me" }]
 dependencies = [
     "fastapi (>=0.85.0,<0.86.0)",
-    "sqlalchemy (==1.4.41)",
+    "sqlalchemy (>=2.0.37,<3.0.0)",
     "pydantic (>=1.10.2,<2.0.0)",
-    "sqlmodel (>=0.0.8,<0.0.9)",
+    "sqlmodel (>=0.0.22,<0.0.23)",
     "uvicorn[standard] (>=0.18.2,<0.19.0)",
     "psycopg2 (>=2.9.3,<3.0.0)",
     "alembic (>=1.8.1,<2.0.0)",
@@ -24,6 +24,9 @@ dependencies = [
 [project.urls]
 repository = "https://github.com/tomy0000000/k-backend"
 documentation = "https://github.com/tomy0000000/k-backend/wiki"
+
+[tool.poetry]
+package-mode = false
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.8.0"
