@@ -1,24 +1,23 @@
 from datetime import datetime
-from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
 
 class InvoiceBase(SQLModel):
-    number: Optional[str]
-    card_type: Optional[str]
-    card_number: Optional[str]
-    seller_name: Optional[str]
-    status: Optional[str]
-    donatable: Optional[bool]
-    amount: Optional[str]
-    period: Optional[str]
-    donate_mark: Optional[int]
-    seller_tax_id: Optional[str]
-    seller_address: Optional[str]
-    buyer_tax_id: Optional[str]
-    currency: Optional[str]
-    timestamp: Optional[datetime]
+    number: str | None
+    card_type: str | None
+    card_number: str | None
+    seller_name: str | None
+    status: str | None
+    donatable: bool | None
+    amount: str | None
+    period: str | None
+    donate_mark: int | None
+    seller_tax_id: str | None
+    seller_address: str | None
+    buyer_tax_id: str | None
+    currency: str | None
+    timestamp: datetime | None
 
     class Config:
         schema_extra = {
@@ -42,7 +41,7 @@ class InvoiceBase(SQLModel):
 
 
 class InvoiceBaseWithId(InvoiceBase):
-    number: str = Field(primary_key=True, nullable=False)
+    number: str = Field(primary_key=True)
 
 
 class InvoiceBaseStrict(InvoiceBaseWithId):
@@ -55,10 +54,10 @@ class InvoiceBaseStrict(InvoiceBaseWithId):
     period: str
     donate_mark: int
     seller_tax_id: str
-    seller_address: Optional[str] = None
-    buyer_tax_id: Optional[str] = None
-    currency: Optional[str] = None
-    timestamp: datetime = Field(nullable=False)
+    seller_address: str | None = None
+    buyer_tax_id: str | None = None
+    currency: str | None = None
+    timestamp: datetime
 
 
 class Invoice(InvoiceBaseStrict, table=True):
@@ -94,12 +93,12 @@ class InvoiceWriteResponse(SQLModel):
 
 
 class InvoiceDetailBase(SQLModel):
-    invoice_number: Optional[str]
-    row_number: Optional[int] = Field()
-    description: Optional[str]
-    quantity: Optional[str]
-    unit_price: Optional[str]
-    amount: Optional[str]
+    invoice_number: str | None
+    row_number: int | None
+    description: str | None
+    quantity: str | None
+    unit_price: str | None
+    amount: str | None
 
     class Config:
         schema_extra = {
@@ -114,10 +113,8 @@ class InvoiceDetailBase(SQLModel):
 
 
 class InvoiceDetailBaseWithId(InvoiceDetailBase):
-    invoice_number: str = Field(
-        primary_key=True, foreign_key="invoice.number", nullable=False
-    )
-    row_number: int = Field(primary_key=True, nullable=False)
+    invoice_number: str = Field(primary_key=True, foreign_key="invoice.number")
+    row_number: int = Field(primary_key=True)
 
 
 class InvoiceDetailBaseStrict(InvoiceDetailBaseWithId):
@@ -161,7 +158,7 @@ class InvoiceDetailWriteResponse(SQLModel):
 
 class InvoiceCarrier(SQLModel, table=True):
     __tablename__ = "invoice_carrier"
-    id: Optional[int] = Field(primary_key=True, nullable=False)
+    id: int | None = Field(primary_key=True, default=None)
     type: str
     card_id: str
     name: str

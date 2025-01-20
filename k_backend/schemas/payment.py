@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import sqlalchemy
 from pydantic import root_validator
@@ -14,6 +14,11 @@ from ._custom_types import (
     create_timestamp_validator,
     tz_timestamp_reader,
 )
+
+if TYPE_CHECKING:
+    from .account import Account
+    from .category import Category
+    from .psp import PSP
 
 #
 # Payment Category
@@ -34,30 +39,26 @@ class PaymentType(enum.Enum):
 
 class PaymentBase(SQLModel):
     type: PaymentType = Field(
-        sa_column=Column(sqlalchemy.Enum(PaymentType), nullable=False),
-        nullable=False,
+        sa_column=Column(sqlalchemy.Enum(PaymentType), nullable=False)
     )
     timestamp: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False),
-        nullable=False,
         title="Local timestamp, or timezone-aware timestamp",
     )
-    timezone: PydanticTimezone = Field(
-        sa_column=Column(SATimezone(), nullable=False), nullable=False
-    )
-    description: Optional[str]
+    timezone: PydanticTimezone = Field(sa_column=Column(SATimezone(), nullable=False))
+    description: str | None
 
 
 class Payment(PaymentBase, table=True):
     __tablename__ = "payment"
-    id: Optional[int] = Field(primary_key=True, nullable=False)
+    id: int | None = Field(primary_key=True, default=None)
     total: Decimal
     transactions: list["Transaction"] = Relationship(back_populates="payment")
     entries: list["PaymentEntry"] = Relationship(back_populates="payment")
 
 
 class PaymentCreate(PaymentBase):
-    total: Optional[Decimal]
+    total: Decimal | None
 
     @root_validator
     def verify_timezone(cls, values):
@@ -82,17 +83,17 @@ class PaymentRead(PaymentBase):
 
 
 class PaymentEntryBase(SQLModel):
-    payment_id: Optional[int] = Field(foreign_key="payment.id", nullable=False)
-    category_id: int = Field(foreign_key="category.id", nullable=False)
+    payment_id: int = Field(foreign_key="payment.id")
+    category_id: int = Field(foreign_key="category.id")
     amount: Decimal
     quantity: int
-    description: Optional[str]
+    description: str | None
 
 
 class PaymentEntry(PaymentEntryBase, table=True):
     __tablename__ = "payment_entry"
-    id: Optional[int] = Field(primary_key=True, nullable=False)
-    payment_id: int = Field(foreign_key="payment.id", nullable=False)
+    id: int | None = Field(primary_key=True, default=None)
+    payment_id: int = Field(foreign_key="payment.id")
     payment: Payment = Relationship(back_populates="entries")
     category: "Category" = Relationship(back_populates="entries")
 
@@ -112,26 +113,24 @@ class PaymentEntryRead(PaymentEntryBase):
 
 
 class TransactionBase(SQLModel):
-    account_id: int = Field(primary_key=True, foreign_key="account.id", nullable=False)
-    payment_id: Optional[int]
+    account_id: int = Field(primary_key=True, foreign_key="account.id")
+    payment_id: int | None
     amount: Decimal
-    timestamp: Optional[datetime]
-    timezone: Optional[PydanticTimezone]
-    description: Optional[str]
-    reconcile: bool = Field(nullable=False, default=False)
-    psp_id: Optional[int] = Field(foreign_key="payment_service_providers.id")
-    psp_reconcile: Optional[bool] = Field(nullable=False, default=False)
+    timestamp: datetime | None
+    timezone: PydanticTimezone | None
+    description: str | None
+    reconcile: bool = False
+    psp_id: int | None = Field(foreign_key="payment_service_providers.id", default=None)
+    psp_reconcile: bool | None = None
 
 
 class Transaction(TransactionBase, table=True):
     __tablename__ = "transaction"
-    payment_id: int = Field(primary_key=True, foreign_key="payment.id", nullable=False)
+    payment_id: int = Field(primary_key=True, foreign_key="payment.id")
     timestamp: datetime = Field(
-        sa_column=Column(DateTime(timezone=True), nullable=False), nullable=False
+        sa_column=Column(DateTime(timezone=True), nullable=False)
     )
-    timezone: PydanticTimezone = Field(
-        sa_column=Column(SATimezone(), nullable=False), nullable=False
-    )
+    timezone: PydanticTimezone = Field(sa_column=Column(SATimezone(), nullable=False))
     account: "Account" = Relationship(back_populates="transactions")
     payment: Payment = Relationship(back_populates="transactions")
     psp: Optional["PSP"] = Relationship(back_populates="transactions")
@@ -182,10 +181,3 @@ class PaymentCreateDetailed(SQLModel):
     payment: PaymentCreate
     transactions: list[TransactionCreate]
     entries: list[PaymentEntryCreate]
-
-
-# FIXME: Find away to prevent this
-# flake8: noqa
-from .account import Account
-from .category import Category
-from .psp import PSP

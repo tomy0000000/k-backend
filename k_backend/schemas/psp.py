@@ -1,6 +1,9 @@
-from typing import Optional
+from typing import TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from .payment import Transaction
 
 
 class PSPBase(SQLModel):
@@ -9,7 +12,7 @@ class PSPBase(SQLModel):
 
 class PSP(PSPBase, table=True):
     __tablename__ = "payment_service_providers"
-    id: Optional[int] = Field(primary_key=True, nullable=False)
+    id: int | None = Field(primary_key=True, default=None)
     transactions: "Transaction" = Relationship(back_populates="psp")
 
 
@@ -19,8 +22,3 @@ class PSPCreate(PSPBase):
 
 class PSPRead(PSPBase):
     id: int
-
-
-# FIXME: Find away to prevent this
-# flake8: noqa
-from .payment import Transaction
