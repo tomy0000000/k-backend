@@ -4,16 +4,11 @@ from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
 import sqlalchemy
-from pydantic import root_validator
+from pydantic_extra_types.timezone_name import TimeZoneName
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
 from ..util import PYDANTIC_JSON_ENCODERS
-from ._custom_types import (
-    PydanticTimezone,
-    SATimezone,
-    create_timestamp_validator,
-    tz_timestamp_reader,
-)
+from ._custom_types import SATimezone
 
 if TYPE_CHECKING:
     from .account import Account
@@ -45,7 +40,7 @@ class PaymentBase(SQLModel):
         sa_column=Column(DateTime(timezone=True), nullable=False),
         title="Local timestamp, or timezone-aware timestamp",
     )
-    timezone: PydanticTimezone = Field(sa_column=Column(SATimezone(), nullable=False))
+    timezone: TimeZoneName = Field(sa_column=Column(SATimezone(), nullable=False))
     description: str | None
 
 
@@ -60,18 +55,10 @@ class Payment(PaymentBase, table=True):
 class PaymentCreate(PaymentBase):
     total: Decimal | None
 
-    @root_validator
-    def verify_timezone(cls, values):
-        return create_timestamp_validator(values)
-
 
 class PaymentRead(PaymentBase):
     id: int
     total: Decimal
-
-    @root_validator
-    def convert_timezone(cls, values):
-        return tz_timestamp_reader(values)
 
     class Config:
         json_encoders = PYDANTIC_JSON_ENCODERS
@@ -117,7 +104,7 @@ class TransactionBase(SQLModel):
     payment_id: int | None
     amount: Decimal
     timestamp: datetime | None
-    timezone: PydanticTimezone | None
+    timezone: TimeZoneName | None
     description: str | None
     reconcile: bool = False
     psp_id: int | None = Field(foreign_key="payment_service_providers.id", default=None)
@@ -130,14 +117,10 @@ class Transaction(TransactionBase, table=True):
     timestamp: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False)
     )
-    timezone: PydanticTimezone = Field(sa_column=Column(SATimezone(), nullable=False))
+    timezone: TimeZoneName = Field(sa_column=Column(SATimezone(), nullable=False))
     account: "Account" = Relationship(back_populates="transactions")
     payment: Payment = Relationship(back_populates="transactions")
     psp: Optional["PSP"] = Relationship(back_populates="transactions")
-
-    @root_validator
-    def verify_timezone(cls, values):
-        return create_timestamp_validator(values)
 
 
 class TransactionCreate(TransactionBase):
@@ -147,11 +130,7 @@ class TransactionCreate(TransactionBase):
 class TransactionRead(TransactionBase):
     payment_id: int
     timestamp: datetime
-    timezone: PydanticTimezone
-
-    @root_validator
-    def convert_timezone(cls, values):
-        return tz_timestamp_reader(values)
+    timezone: TimeZoneName
 
     class Config:
         json_encoders = PYDANTIC_JSON_ENCODERS

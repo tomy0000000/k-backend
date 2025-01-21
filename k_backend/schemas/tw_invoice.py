@@ -20,7 +20,7 @@ class InvoiceBase(SQLModel):
     timestamp: datetime | None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "number": "AB12345678",
                 "card_type": "3J0002",
@@ -101,7 +101,7 @@ class InvoiceDetailBase(SQLModel):
     amount: str | None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "row_number": "1",
                 "description": "冰茶密斯朵V",
