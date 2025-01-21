@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
 from ..auth import get_client
-from ..db import get_session
+from ..core.db import get_session
 from ..schemas.psp import PSP, PSPCreate, PSPRead
 
 TAG_NAME = "Payment Service Provider"

@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 from ..auth import get_client
+from ..core.db import get_session
 from ..crud.transaction import get_transactions
-from ..db import get_session
 from ..schemas.payment import TransactionRead
 
 TAG_NAME = "Transaction"

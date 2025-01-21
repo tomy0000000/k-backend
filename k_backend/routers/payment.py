@@ -8,7 +8,7 @@ from k_backend.crud.payment import get_payments
 from k_backend.schemas.account import Account
 
 from ..auth import get_client
-from ..db import get_session
+from ..core.db import get_session
 from ..schemas.payment import (
     Payment,
     PaymentCreateDetailed,

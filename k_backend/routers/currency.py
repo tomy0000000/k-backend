@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends
 from sqlmodel import Session, select
 
 from ..auth import get_client
-from ..db import get_session
+from ..core.db import get_session
 from ..schemas.account import Currency
 
 TAG_NAME = "Currency"

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
-from .db import alembic_upgrade
+from .core.db import alembic_upgrade
 from .routers import routers, tags
 from .util import KustomJSONResponse
 

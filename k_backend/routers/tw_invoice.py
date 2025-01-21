@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlmodel import Session, select
 
 from ..auth import get_client
-from ..db import get_session
+from ..core.db import get_session
 from ..schemas.tw_invoice import (
     Invoice,
     InvoiceDetail,
@@ -100,7 +100,7 @@ def create_or_update_details(
     *,
     session: Session = Depends(get_session),
     number: str = Path(example="AB12345678"),
-    invoice_details: list[InvoiceDetailWrite]
+    invoice_details: list[InvoiceDetailWrite],
 ):
     """
     Create or update invoice details
