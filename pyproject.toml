@@ -7,7 +7,7 @@ readme = "README.md"
 requires-python = ">=3.12,<4.0.0"
 authors = [{ name = "Tomy Hsieh", email = "pypi@tomy.me" }]
 dependencies = [
-    "fastapi (>=0.85.0,<0.86.0)",
+    "fastapi (>=0.115,<0.116)",
     "sqlalchemy (>=2.0.37,<3.0.0)",
     "pydantic (>=1.10.2,<2.0.0)",
     "sqlmodel (>=0.0.22,<0.0.23)",
