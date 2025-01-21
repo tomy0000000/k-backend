@@ -36,10 +36,27 @@ isort = "^5.10.1"
 ipython = "^8.5.0"
 flake8 = "^5.0.4"
 mypy = "^0.981"
+pytest = "^8.3.4"
+coverage = "^7.6.10"
+httpx = "^0.28.1"
+factory-boy = "^3.3.1"
 
+# https://coverage.readthedocs.io/en/latest/config.html
+[tool.coverage.run]
+source = ["k_backend"]
+omit = ["k_backend/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+
+# https://pycqa.github.io/isort/docs/configuration/config_files.html
 [tool.isort]
 profile = "black"
 src_paths = ["k_backend"]
+
+# https://docs.pytest.org/en/stable/reference/customize.html#configuration-file-formats
+[tool.pytest.ini_options]
+addopts = "--capture=no"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
