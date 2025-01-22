@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # FOSSA's API Key are meant to be exposed as to doc
       - name: Scan License
@@ -61,11 +61,11 @@ jobs:
       (needs.license.result == 'success' || needs.license.result == 'skipped')
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Docker Meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ github.repository }}
@@ -74,7 +74,7 @@ jobs:
             type=edge
 
       - name: Build and Push Image
-        uses: ./.github/actions/build-push-image
+        uses: tomy0000000/actions/build-push-image@main
         with:
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           tags: ${{ steps.meta.outputs.tags }}
