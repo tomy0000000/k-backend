@@ -8,7 +8,7 @@ from .util import KustomJSONResponse
 app = FastAPI(
     title="K",
     description="The All-in-One Financial Island",
-    version="0.7.0",
+    version="0.8.0",
     default_response_class=KustomJSONResponse,
     openapi_tags=tags,
     contact={"name": "Tomy Hsieh", "url": "https://github.com/tomy0000000"},
