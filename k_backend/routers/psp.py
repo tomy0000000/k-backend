@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
 from ..auth import get_client
-from ..db import get_session
+from ..core.db import get_session
 from ..schemas.psp import PSP, PSPCreate, PSPRead
 
 TAG_NAME = "Payment Service Provider"
@@ -12,7 +12,7 @@ tag = {
 }
 
 psp_router = APIRouter(
-    prefix="/psp",
+    prefix="/psps",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},

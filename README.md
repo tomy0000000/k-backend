@@ -1,7 +1,7 @@
 # K Backend
 
 <p align="left">
-    <img src="https://img.shields.io/badge/python-3.10-blue.svg?logo=python" alt="Python 3.10" />
+    <img src="https://img.shields.io/badge/python-3.12-blue.svg?logo=python" alt="Python 3.12" />
     <a href="https://hub.docker.com/repository/docker/tomy0000000/k-backend">
         <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/tomy0000000/k-backend">
     </a>

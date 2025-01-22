@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
 from ..auth import get_client
-from ..db import get_session
+from ..core.db import get_session
 from ..schemas.category import (
     Category,
     CategoryCreate,
@@ -17,7 +17,7 @@ tag = {
 }
 
 category_router = APIRouter(
-    prefix="/category",
+    prefix="/categories",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},

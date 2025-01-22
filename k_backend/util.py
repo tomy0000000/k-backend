@@ -4,10 +4,8 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import simplejson
-from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from pydantic.error_wrappers import ErrorWrapper
 
 PYDANTIC_JSON_ENCODERS = {
     Decimal: lambda d: d,
@@ -46,8 +44,3 @@ class KustomJSONResponse(JSONResponse):
             default=handle_special_types,
             use_decimal=True,
         ).encode("utf-8")
-
-
-class CustomValidationError(RequestValidationError):
-    def __init__(self, msg: str, loc: tuple):
-        super().__init__([ErrorWrapper(ValueError(msg), loc)])

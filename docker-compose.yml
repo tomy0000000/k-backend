@@ -7,20 +7,17 @@ services:
     env_file:
       - "instance/production.env"
     image: "tomy0000000/k-backend"
-    networks:
-      - "postgres_tunnel"
+    restart: "always"
+    volumes:
+      - "./instance:/usr/src/k-backend/instance"
   postgres:
     container_name: "k_backend_db"
     env_file:
       - "instance/production.env"
     image: "postgres:14"
-    networks:
-      - "postgres_tunnel"
+    restart: "always"
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
-
-networks:
-  postgres_tunnel:
 
 volumes:
   postgres_data:

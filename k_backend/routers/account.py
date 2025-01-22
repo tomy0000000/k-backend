@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
 from ..auth import get_client
-from ..db import get_session
+from ..core.db import get_session
 from ..schemas.account import Account, AccountCreate, AccountRead
 
 TAG_NAME = "Account"
@@ -13,7 +13,7 @@ tag = {
 }
 
 account_router = APIRouter(
-    prefix="/account",
+    prefix="/accounts",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},

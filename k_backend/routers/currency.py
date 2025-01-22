@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends
 from sqlmodel import Session, select
 
 from ..auth import get_client
-from ..db import get_session
+from ..core.db import get_session
 from ..schemas.account import Currency
 
 TAG_NAME = "Currency"
@@ -12,7 +12,7 @@ tag = {
 }
 
 currency_router = APIRouter(
-    prefix="/currency",
+    prefix="/currencies",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},
@@ -44,7 +44,7 @@ EXAMPLES = {
 def create(
     *,
     session: Session = Depends(get_session),
-    currency: Currency = Body(examples=EXAMPLES["create"])
+    currency: Currency = Body(examples=EXAMPLES["create"]),
 ):
     session.add(currency)
     session.commit()

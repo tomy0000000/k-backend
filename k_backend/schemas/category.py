@@ -1,18 +1,21 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from .payment import PaymentEntry
 
 
 class CategoryBase(SQLModel):
     name: str
-    description: Optional[str]
-    disabled: bool = Field(nullable=False, default=False)
-    parent_id: Optional[int] = Field(default=None, foreign_key="category.id")
+    description: str | None
+    disabled: bool = Field(default=False)
+    parent_id: int | None = Field(foreign_key="category.id", default=None)
 
 
 class Category(CategoryBase, table=True):
     __tablename__ = "category"
-    id: Optional[int] = Field(primary_key=True, nullable=False)
+    id: int | None = Field(primary_key=True, default=None)
     entries: list["PaymentEntry"] = Relationship(back_populates="category")
     parent_category: Optional["Category"] = Relationship(
         back_populates="sub_categories",
@@ -30,9 +33,4 @@ class CategoryRead(CategoryBase):
 
 
 class CategoryReadWithChildren(CategoryRead):
-    sub_categories: Optional[list[CategoryRead]]
-
-
-# FIXME: Find away to prevent this
-# flake8: noqa
-from .payment import PaymentEntry
+    sub_categories: list[CategoryRead] | None

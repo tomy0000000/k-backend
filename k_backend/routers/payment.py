@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Body, Depends, HTTPException
-from sqlmodel import Session, select
+from datetime import date
 
+from fastapi import APIRouter, Body, Depends, HTTPException
+from pydantic_core import PydanticCustomError
+from sqlmodel import Session
+
+from k_backend.crud.payment import get_payments
 from k_backend.schemas.account import Account
 
 from ..auth import get_client
-from ..db import get_session
+from ..core.db import get_session
 from ..schemas.payment import (
     Payment,
     PaymentCreateDetailed,
@@ -14,7 +18,6 @@ from ..schemas.payment import (
     PaymentType,
     Transaction,
 )
-from ..util import CustomValidationError
 
 TAG_NAME = "Payment"
 tag = {
@@ -23,7 +26,7 @@ tag = {
 }
 
 payment_router = APIRouter(
-    prefix="/payment",
+    prefix="/payments",
     tags=[TAG_NAME],
     dependencies=[Depends(get_client)],
     responses={404: {"description": "Not found"}},
@@ -194,34 +197,42 @@ def create(
     # Calculate total
     if body.payment.type in (PaymentType.Expense, PaymentType.Income):
         if body.payment.total is not None:
-            raise CustomValidationError(
+            raise PydanticCustomError(
+                "total_should_not_be_provided",
                 "Total field is not allowed for expense or income",
-                ("body", "payment", "total"),
+                {"loc": ("body", "payment", "total")},
             )
         entries_total = sum([entry.amount * entry.quantity for entry in body.entries])
         transaction_total = sum(
             [transaction.amount for transaction in body.transactions]
         )
         if entries_total != transaction_total:
-            raise CustomValidationError(
+            raise PydanticCustomError(
+                "total_mismatch",
                 f"Entries total {entries_total} does not"
                 f" match transaction total {transaction_total}",
-                ("body", "__root__"),
+                {"loc": ("body", "__root__")},
             )
         body.payment.total = transaction_total
     elif body.payment.type is PaymentType.Transfer:
         if body.payment.total is None:
-            raise CustomValidationError(
-                "Total field is required for transfer", ("body", "payment", "total")
+            raise PydanticCustomError(
+                "missing_total",
+                "Total field is required for transfer",
+                {"loc": ("body", "payment", "total")},
             )
     elif body.payment.type is PaymentType.Exchange:
         if body.payment.total is None:
-            raise CustomValidationError(
-                "Total field is required for exchange", ("body", "payment", "total")
+            raise PydanticCustomError(
+                "missing_total",
+                "Total field is required for exchange",
+                {"loc": ("body", "payment", "total")},
             )
     else:
-        raise CustomValidationError(
-            f"Unknown type {body.payment.type}", ("body", "payment", "type")
+        raise PydanticCustomError(
+            "unknown_payment_type",
+            f"Unknown type {body.payment.type}",
+            {"loc": ("body", "payment", "type")},
         )
 
     # Store payment
@@ -241,7 +252,8 @@ def create(
         # Modify account balance
         account = session.query(Account).get(transaction.account_id)
         if not account:
-            raise CustomValidationError(
+            raise PydanticCustomError(
+                "account_not_found",
                 f"Account with id: {transaction.account_id} does not exist",
                 ("body", "transactions", index, "account_id"),
             )
@@ -269,9 +281,13 @@ def create(
 
 
 @payment_router.get("", name="Read Payments", response_model=list[PaymentReadDetailed])
-def reads(*, session: Session = Depends(get_session)):
-    payments = session.exec(select(Payment)).all()
-    return payments
+def reads(
+    *,
+    session: Session = Depends(get_session),
+    payment_date: date | None = None,
+    category_id: int | None = None,
+):
+    return get_payments(session, payment_date, category_id)
 
 
 @payment_router.patch("", name="Update Payment", response_model=PaymentRead)

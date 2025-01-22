@@ -1,4 +1,4 @@
-from . import account, auth, category, currency, payment, psp, tw_invoice
+from . import account, auth, category, currency, payment, psp, transaction, tw_invoice
 
 routers = [
     auth.auth_router,
@@ -7,6 +7,7 @@ routers = [
     category.category_router,
     payment.payment_router,
     psp.psp_router,
+    transaction.txn_router,
     tw_invoice.invoice_router,
 ]
 
@@ -17,5 +18,6 @@ tags = [
     category.tag,
     payment.tag,
     psp.tag,
+    transaction.tag,
     tw_invoice.tag,
 ]

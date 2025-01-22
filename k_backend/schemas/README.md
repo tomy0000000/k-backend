@@ -1,3 +1,3 @@
 # Schema
 
-View graph in [dbdiagram](https://dbdiagram.io/d/60633a97ecb54e10c33df85d)
+View graph in [dbdiagram](https://dbdiagram.io/d/K-6708013297a66db9a39215c9)
