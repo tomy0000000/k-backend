@@ -40,8 +40,7 @@ class CategoryFactory(SQLAlchemyModelFactory):
     description = factory.Faker("sentence")
 
 
-# Expense of one transaction + one entry
-class PaymentSimpleExpenseFactory(SQLAlchemyModelFactory):
+class PaymentFactory(SQLAlchemyModelFactory):
     class Meta:
         model = Payment
         sqlalchemy_session_persistence = "commit"
@@ -51,12 +50,16 @@ class PaymentSimpleExpenseFactory(SQLAlchemyModelFactory):
     timezone = "UTC"
     description = factory.Faker("sentence")
     total = factory.Faker("pydecimal", left_digits=5, right_digits=2)
-    # transactions = factory.RelatedFactoryList(
-    #     "k_backend.tests.factories.TransactionFactory", "payment", size=1
-    # )
-    # entries = factory.RelatedFactoryList(
-    #     "k_backend.tests.factories.PaymentEntryFactory", "payment", size=1
-    # )
+
+
+# Expense of one transaction + one entry
+class PaymentSimpleExpenseFactory(PaymentFactory):
+    transactions = factory.RelatedFactoryList(
+        "k_backend.tests.factories.TransactionFactory", "payment", size=1
+    )
+    entries = factory.RelatedFactoryList(
+        "k_backend.tests.factories.PaymentEntryFactory", "payment", size=1
+    )
 
 
 class PaymentEntryFactory(SQLAlchemyModelFactory):
@@ -64,7 +67,7 @@ class PaymentEntryFactory(SQLAlchemyModelFactory):
         model = PaymentEntry
         sqlalchemy_session_persistence = "commit"
 
-    payment = factory.SubFactory(PaymentSimpleExpenseFactory)
+    payment = factory.SubFactory(PaymentFactory)
     category = factory.SubFactory(CategoryFactory)
     amount = factory.Faker("pydecimal", left_digits=5, right_digits=2)
     quantity = factory.Faker("random_int", min=1, max=10)
@@ -77,7 +80,7 @@ class TransactionFactory(SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = "commit"
 
     account = factory.SubFactory(AccountFactory)
-    payment = factory.SubFactory(PaymentSimpleExpenseFactory)
+    payment = factory.SubFactory(PaymentFactory)
     amount = factory.Faker("pydecimal", left_digits=5, right_digits=2)
     timestamp = factory.Faker("date_time")
     timezone = "UTC"

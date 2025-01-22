@@ -10,7 +10,7 @@ from k_backend.main import app
 
 
 # Reference: https://github.com/fastapi/sqlmodel/discussions/615
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="class", autouse=True)
 def session() -> Generator[Session, None, None]:
     from . import factories  # noqa: F401
 
