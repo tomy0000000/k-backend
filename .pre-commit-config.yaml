@@ -1,3 +1,8 @@
+# https://pre-commit.ci/#configuration
+ci:
+  autoupdate_branch: "develop"
+  autoupdate_commit_msg: "🗄 ci: pre-commit autoupdate"
+# https://pre-commit.com/#pre-commit-configyaml---top-level
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: "v5.0.0"

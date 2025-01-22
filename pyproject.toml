@@ -40,22 +40,23 @@ pytest = "^8.3.4"
 coverage = "^7.6.10"
 httpx = "^0.28.1"
 factory-boy = "^3.3.1"
+pre-commit = "^4.1.0"
 
-# https://coverage.readthedocs.io/en/latest/config.html
 [tool.coverage.run]
+# https://coverage.readthedocs.io/en/latest/config.html
 source = ["k_backend"]
 omit = ["k_backend/tests/*"]
 
 [tool.coverage.report]
 show_missing = true
 
-# https://pycqa.github.io/isort/docs/configuration/config_files.html
 [tool.isort]
+# https://pycqa.github.io/isort/docs/configuration/config_files.html
 profile = "black"
 src_paths = ["k_backend"]
 
-# https://docs.pytest.org/en/stable/reference/customize.html#configuration-file-formats
 [tool.pytest.ini_options]
+# https://docs.pytest.org/en/stable/reference/customize.html#configuration-file-formats
 addopts = "--capture=no"
 
 [build-system]
