@@ -58,8 +58,8 @@ async def get_client(token: str = Depends(oauth2_scheme)):
         client_name: str = payload.get("sub")
         if client_name is None:
             raise credentials_exception
-    except JWTError:
-        raise credentials_exception
+    except JWTError as err:
+        raise credentials_exception from err
     client = CLIENTS.get(client_name)
     if not client:
         raise credentials_exception

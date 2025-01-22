@@ -43,7 +43,7 @@ def test_get_payment_by_category(session: Session):
     )
 
     payments = get_payments(session, category_id=category_1.id)
-    payment_ids = set(payment.id for payment in payments)
+    payment_ids = {payment.id for payment in payments}
     assert len(payments) == 2
     assert payment_1.id in payment_ids
     assert payment_2.id in payment_ids
