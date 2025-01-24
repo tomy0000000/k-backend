@@ -1,0 +1,11 @@
+services:
+  api:
+    build: .
+    command: "--reload"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ".:/usr/src/k-backend"
+  db:
+    ports:
+      - "5432:5432"

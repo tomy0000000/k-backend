@@ -1,8 +1,8 @@
-from alembic import command
-from alembic.config import Config
 from loguru import logger
 from sqlmodel import Session, create_engine
 
+from alembic import command
+from alembic.config import Config
 from k_backend.core.config import settings
 
 engine = create_engine(

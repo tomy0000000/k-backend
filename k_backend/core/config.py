@@ -8,25 +8,26 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="instance/development.env",
+        env_file="instance/.env",
         env_ignore_empty=True,
         extra="ignore",
     )
-    API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
-    ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+    ENVIRONMENT: Literal["local", "staging", "production"] = "production"
 
-    PROJECT_NAME: str
-    POSTGRES_HOST: str
+    PROJECT_NAME: str = "K"
+    POSTGRES_HOST: str = "k-backend-db"  # Default Docker Compose service name
     POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = ""
+    POSTGRES_USER: str = "k"
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str = "k"
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
-        return MultiHostUrl.build(
+        # FIXME someday
+        # pydantic recognize PostgresDsn as MultiHostUrl in 2.9.2, not after that
+        return MultiHostUrl.build(  # type: ignore
             scheme="postgresql",
             username=self.POSTGRES_USER,
             password=self.POSTGRES_PASSWORD,
@@ -36,4 +37,4 @@ class Settings(BaseSettings):
         )
 
 
-settings = Settings()
+settings = Settings()  # type: ignore

@@ -18,3 +18,6 @@ RUN poetry config virtualenvs.create false && \
 
 # Copy Application
 COPY . /usr/src/k-backend
+
+# Run Application
+ENTRYPOINT [ "uvicorn", "k_backend.main:app", "--host", "0.0.0.0", "--port", "8000" ]

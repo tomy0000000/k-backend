@@ -11,11 +11,8 @@
     <a href="https://github.com/tomy0000000/K-Backend/blob/main/LICENSE">
         <img src="https://img.shields.io/github/license/tomy0000000/K-Backend.svg" alt="MIT liscense" />
     </a>
-    <a href="https://github.com/psf/black">
-        <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" />
-    </a>
-    <a href="https://pycqa.github.io/isort">
-        <img src="https://img.shields.io/badge/imports-isort-1674b1?labelColor=ef8336&style=flat" alt="Imports: isort" />
+    <a href="https://github.com/astral-sh/ruff">
+        <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff">
     </a>
     <a href="http://mypy-lang.org/">
         <img src="https://img.shields.io/badge/mypy-checked-blue" alt="mypy: checked">

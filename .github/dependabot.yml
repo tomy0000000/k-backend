@@ -8,7 +8,7 @@ updates:
     assignees:
       - "tomy0000000"
     commit-message:
-      prefix: "🗄 chore: "
+      prefix: "⬆️ bump: "
     target-branch: "develop"
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -17,5 +17,5 @@ updates:
     assignees:
       - "tomy0000000"
     commit-message:
-      prefix: "🗄 chore: "
+      prefix: "⬆️ bump: "
     target-branch: "develop"

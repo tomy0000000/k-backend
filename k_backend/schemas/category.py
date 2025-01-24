@@ -19,7 +19,7 @@ class Category(CategoryBase, table=True):
     entries: list["PaymentEntry"] = Relationship(back_populates="category")
     parent_category: Optional["Category"] = Relationship(
         back_populates="sub_categories",
-        sa_relationship_kwargs=dict(remote_side="Category.id"),
+        sa_relationship_kwargs={"remote_side": "Category.id"},
     )
     sub_categories: list["Category"] = Relationship(back_populates="parent_category")
 

@@ -29,8 +29,10 @@ def create(*, session: Session = Depends(get_session), account: AccountCreate):
         session.commit()
         session.refresh(db_account)
         return db_account
-    except IntegrityError:
-        raise ValueError(f"Currency {db_account.currency_code} is not available")
+    except IntegrityError as err:
+        raise ValueError(
+            f"Currency {db_account.currency_code} is not available"
+        ) from err
 
 
 @account_router.get("", name="Read Accounts", response_model=list[AccountRead])
