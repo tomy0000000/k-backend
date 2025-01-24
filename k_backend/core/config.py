@@ -12,16 +12,15 @@ class Settings(BaseSettings):
         env_ignore_empty=True,
         extra="ignore",
     )
-    API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ENVIRONMENT: Literal["local", "staging", "production"] = "production"
 
-    PROJECT_NAME: str
-    POSTGRES_HOST: str
+    PROJECT_NAME: str = "K"
+    POSTGRES_HOST: str = "k-backend-db"  # Default Docker Compose service name
     POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = ""
+    POSTGRES_USER: str = "k"
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str = "k"
 
     @computed_field  # type: ignore[prop-decorator]
     @property

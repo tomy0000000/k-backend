@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
+from .core.config import settings
 from .core.db import alembic_upgrade
 from .routers import routers, tags
 from .util import KustomJSONResponse
 
 app = FastAPI(
-    title="K",
+    title=settings.PROJECT_NAME,
     description="The All-in-One Financial Island",
     version="0.8.0",
     default_response_class=KustomJSONResponse,
