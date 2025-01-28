@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-client": "openapi-ts --input http://localhost:8000/openapi.json --output ./lib/client --client @hey-api/client-axios"
   },
   "dependencies": {
+    "@hey-api/client-axios": "^0.5.2",
     "@hookform/resolvers": "^3.10.0",
     "@iconify-icon/react": "^2.3.0",
     "@radix-ui/react-collapsible": "^1.1.2",
@@ -34,6 +36,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.63.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
