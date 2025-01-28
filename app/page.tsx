@@ -17,7 +17,7 @@ const payments = [
   },
 ];
 
-export default function Home() {
+export default function CalendarApp() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   return (
