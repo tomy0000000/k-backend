@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from .core.config import settings
@@ -17,6 +18,14 @@ app = FastAPI(
         "name": "MIT",
         "url": "https://github.com/tomy0000000/K-Backend/blob/main/LICENSE",
     },
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.add_event_handler("startup", alembic_upgrade)
