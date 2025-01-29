@@ -1,3 +1,5 @@
+from typing import Any
+
 from . import account, auth, category, currency, payment, psp, transaction, tw_invoice
 
 routers = [
@@ -11,7 +13,7 @@ routers = [
     tw_invoice.invoice_router,
 ]
 
-tags = [
+tags: list[dict[str, Any]] = [
     auth.tag,
     account.tag,
     currency.tag,

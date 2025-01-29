@@ -1,4 +1,7 @@
+from collections.abc import Sequence
+
 from fastapi import APIRouter, Body, Depends
+from fastapi.openapi.models import Example
 from sqlmodel import Session, select
 
 from ..auth import get_client
@@ -20,32 +23,40 @@ currency_router = APIRouter(
 
 EXAMPLES = {
     "create": {
-        "United States Dollar": {
-            "summary": "United States Dollar",
-            "value": {"code": "USD", "name": "United States Dollar", "symbol": "$"},
-        },
-        "Euro": {
-            "summary": "Euro",
-            "value": {"code": "EUR", "name": "Euro", "symbol": "€"},
-        },
-        "British Pound": {
-            "summary": "British Pound",
-            "value": {"code": "GBP", "name": "British Pound", "symbol": "£"},
-        },
-        "New Taiwan Dollar": {
-            "summary": "New Taiwan Dollar",
-            "value": {"code": "TWD", "name": "New Taiwan Dollar", "symbol": "NT$"},
-        },
+        "United States Dollar": Example(
+            {
+                "summary": "United States Dollar",
+                "value": {"code": "USD", "name": "United States Dollar", "symbol": "$"},
+            }
+        ),
+        "Euro": Example(
+            {
+                "summary": "Euro",
+                "value": {"code": "EUR", "name": "Euro", "symbol": "€"},
+            }
+        ),
+        "British Pound": Example(
+            {
+                "summary": "British Pound",
+                "value": {"code": "GBP", "name": "British Pound", "symbol": "£"},
+            }
+        ),
+        "New Taiwan Dollar": Example(
+            {
+                "summary": "New Taiwan Dollar",
+                "value": {"code": "TWD", "name": "New Taiwan Dollar", "symbol": "NT$"},
+            }
+        ),
     }
 }
 
 
-@currency_router.post("", name="Create Currency", response_model=Currency)
+@currency_router.post("", name="Create Currency")
 def create(
     *,
     session: Session = Depends(get_session),
-    currency: Currency = Body(examples=EXAMPLES["create"]),
-):
+    currency: Currency = Body(openapi_examples=EXAMPLES["create"]),
+) -> Currency:
     session.add(currency)
     session.commit()
     session.refresh(currency)
@@ -53,6 +64,6 @@ def create(
 
 
 @currency_router.get("", name="Read Currencies", response_model=list[Currency])
-def reads(*, session: Session = Depends(get_session)):
+def reads(*, session: Session = Depends(get_session)) -> Sequence[Currency]:
     currencies = session.exec(select(Currency)).all()
     return currencies
