@@ -34,5 +34,5 @@ for router in routers:
 
 
 @app.get("/", include_in_schema=False)
-async def redirect_to_swagger():
+async def redirect_to_swagger() -> RedirectResponse:
     return RedirectResponse("docs")

@@ -1,6 +1,7 @@
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -26,26 +27,28 @@ CLIENTS = {client["name"]: Client(**client) for client in raw_clients}
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-def authenticate_client(name: str, password: str, clients: dict = CLIENTS):
+def authenticate_client(
+    name: str, password: str, clients: dict[str, Client] = CLIENTS
+) -> Client | None:
     client = clients.get(name)
     if not client:
-        return False
+        return None
     if client.password != password:
-        return False
+        return None
     return client
 
 
 def create_access_token(
-    data: dict,
+    data: dict[str, Any],
     expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-):
+) -> str:
     to_encode = data.copy()
     to_encode.update({"exp": datetime.utcnow() + expires_delta})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
-async def get_client(token: str = Depends(oauth2_scheme)):
+async def get_client(token: str = Depends(oauth2_scheme)) -> Client:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -53,7 +56,7 @@ async def get_client(token: str = Depends(oauth2_scheme)):
     )
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
-        client_name: str = payload.get("sub")
+        client_name = payload.get("sub")
         if client_name is None:
             raise credentials_exception
     except JWTError as err:
