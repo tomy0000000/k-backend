@@ -8,13 +8,15 @@ import {
   useState,
 } from "react"
 
+const LOCAL_STORAGE_PRESENT = typeof window !== "undefined"
 const LOCAL_STORAGE_KEY = "credential"
 
 type AuthContextType = {
   host: string
   username: string
   password: string
-  setAuth: (host: string, username: string, password: string) => void
+  login: (host: string, username: string, password: string) => Promise<void>
+  logout: () => void
 }
 
 type AuthContextProps = {
@@ -28,15 +30,19 @@ export const AuthProvider = ({ children }: AuthContextProps) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
+  // Load credential from local storage on mount
   useEffect(() => {
-    const existedCredential = localStorage.getItem(LOCAL_STORAGE_KEY)
+    if (!LOCAL_STORAGE_PRESENT) {
+      return
+    }
+    const existedCredential = window.localStorage.getItem(LOCAL_STORAGE_KEY)
     if (existedCredential) {
       const { host, username, password } = JSON.parse(existedCredential)
-      setAuth(host, username, password)
+      login(host, username, password)
     }
   }, [])
 
-  const setAuth = async (host: string, username: string, password: string) => {
+  const login = async (host: string, username: string, password: string) => {
     // Save the old config in case the new one fails
     const oldConfig = client.getConfig()
 
@@ -71,20 +77,31 @@ export const AuthProvider = ({ children }: AuthContextProps) => {
       })
 
       // Save to local storage
-      localStorage.setItem(
-        LOCAL_STORAGE_KEY,
-        JSON.stringify({ host, username, password })
-      )
+      if (LOCAL_STORAGE_PRESENT) {
+        localStorage.setItem(
+          LOCAL_STORAGE_KEY,
+          JSON.stringify({ host, username, password })
+        )
+      }
     } catch (error) {
-      console.error(error)
-
       // Restore the old config
       client.setConfig(oldConfig)
+
+      throw error
+    }
+  }
+
+  const logout = () => {
+    setHost("")
+    setUsername("")
+    setPassword("")
+    if (LOCAL_STORAGE_PRESENT) {
+      window.localStorage.removeItem(LOCAL_STORAGE_KEY)
     }
   }
 
   return (
-    <AuthContext.Provider value={{ host, username, password, setAuth }}>
+    <AuthContext.Provider value={{ host, username, password, login, logout }}>
       {children}
     </AuthContext.Provider>
   )
