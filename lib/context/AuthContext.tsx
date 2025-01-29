@@ -1,5 +1,5 @@
 import { loginTokenPost } from "@/lib/client"
-import { client } from "@/lib/client/client.gen"
+import { Client, createClient } from "@hey-api/client-axios"
 import {
   createContext,
   ReactNode,
@@ -15,6 +15,7 @@ type AuthContextType = {
   host: string
   username: string
   password: string
+  client: Client | undefined
   login: (host: string, username: string, password: string) => Promise<void>
   logout: () => void
 }
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }: AuthContextProps) => {
   const [host, setHost] = useState("")
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [client, setClient] = useState<Client | undefined>(undefined)
 
   // Load credential from local storage on mount
   useEffect(() => {
@@ -43,51 +45,42 @@ export const AuthProvider = ({ children }: AuthContextProps) => {
   }, [])
 
   const login = async (host: string, username: string, password: string) => {
-    // Save the old config in case the new one fails
-    const oldConfig = client.getConfig()
-
-    // Set the new config
-    client.setConfig({ baseURL: host })
+    // Create a new client with the new config
+    const client = createClient({ baseURL: host })
 
     // Try to authenticate with the new config
-    try {
-      const response = await loginTokenPost({
-        client,
-        body: { username, password },
-      })
-      if (response.error) {
-        throw new Error("Failed to authenticate")
-      }
-      if (!response.data) {
-        throw new Error("No data returned")
-      }
-      if (response.data.token_type !== "bearer") {
-        throw new Error(`Invalid token type: ${response.data.token_type}`)
-      }
+    const response = await loginTokenPost({
+      client,
+      body: { username, password },
+    })
+    if (response.error) {
+      throw new Error("Failed to authenticate")
+    }
+    if (!response.data) {
+      throw new Error("No data returned")
+    }
+    if (response.data.token_type !== "bearer") {
+      throw new Error(`Invalid token type: ${response.data.token_type}`)
+    }
 
-      // Save the new config
-      setHost(host)
-      setUsername(username)
-      setPassword(password)
+    // Set the new config
+    client.setConfig({
+      baseURL: host,
+      auth: () => response.data.access_token,
+    })
 
-      // Set the new config
-      client.setConfig({
-        baseURL: host,
-        auth: () => response.data.access_token,
-      })
+    // Save the new config and credential
+    setHost(host)
+    setUsername(username)
+    setPassword(password)
+    setClient(client)
 
-      // Save to local storage
-      if (LOCAL_STORAGE_PRESENT) {
-        localStorage.setItem(
-          LOCAL_STORAGE_KEY,
-          JSON.stringify({ host, username, password })
-        )
-      }
-    } catch (error) {
-      // Restore the old config
-      client.setConfig(oldConfig)
-
-      throw error
+    // Save to local storage
+    if (LOCAL_STORAGE_PRESENT) {
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY,
+        JSON.stringify({ host, username, password })
+      )
     }
   }
 
@@ -95,13 +88,16 @@ export const AuthProvider = ({ children }: AuthContextProps) => {
     setHost("")
     setUsername("")
     setPassword("")
+    setClient(undefined)
     if (LOCAL_STORAGE_PRESENT) {
       window.localStorage.removeItem(LOCAL_STORAGE_KEY)
     }
   }
 
   return (
-    <AuthContext.Provider value={{ host, username, password, login, logout }}>
+    <AuthContext.Provider
+      value={{ host, username, password, client, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   )
