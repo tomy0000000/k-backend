@@ -47,6 +47,8 @@ class PaymentBase(SQLModel):
 class Payment(PaymentBase, table=True):
     __tablename__ = "payment"
     id: int | None = Field(primary_key=True, default=None)
+    # Auto calculated for Expense or Income
+    # Manually logged for Transfer or Exchange
     total: Decimal
     transactions: list["Transaction"] = Relationship(back_populates="payment")
     entries: list["PaymentEntry"] = Relationship(back_populates="payment")
