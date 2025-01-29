@@ -39,6 +39,8 @@ httpx = "^0.28.1"
 factory-boy = "^3.3.1"
 pre-commit = "^4.1.0"
 ruff = "^0.9.2"
+types-simplejson = "^3.19.0.20241221"
+types-python-jose = "^3.3.4.20240106"
 
 [tool.coverage.run]
 # https://coverage.readthedocs.io/en/latest/config.html
@@ -60,6 +62,16 @@ addopts = "--capture=no"
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+# https://mypy.readthedocs.io/en/stable/config_file.html
+strict = true
+exclude = ["venv", ".venv", "alembic", "k_backend/tests"]
+
+[[tool.mypy.overrides]]
+# TODO: Remove this when factory boy supports typing
+module = ["factory.*"]
+ignore_missing_imports = true
 
 [tool.ruff]
 # https://docs.astral.sh/ruff/settings/
