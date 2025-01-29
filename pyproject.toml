@@ -32,7 +32,6 @@ package-mode = false
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^8.5.0"
-flake8 = "^5.0.4"
 mypy = ">=1.14.1,<1.15.0"
 pytest = "^8.3.4"
 coverage = "^7.6.10"
