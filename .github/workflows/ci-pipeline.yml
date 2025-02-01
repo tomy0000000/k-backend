@@ -20,9 +20,6 @@ jobs:
       - name: "🛒 Checkout"
         uses: actions/checkout@v4
 
-      - name: "Dump github context"
-        run: echo "${{ toJson(github) }}"
-
       - name: "🐍 Set up Poetry"
         uses: tomy0000000/actions/python-poetry-install@main
         with:
@@ -57,7 +54,6 @@ jobs:
   license:
     name: "🪪 License Scan"
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.modified, 'pyproject.toml') || contains(github.event.head_commit.modified, 'poetry.lock')
     steps:
       - name: "🛒 Checkout"
         uses: actions/checkout@v4
