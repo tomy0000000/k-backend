@@ -63,7 +63,7 @@ jobs:
   build:
     name: "🏗️ Build"
     runs-on: ubuntu-latest
-    needs: [test, license]
+    needs: [test, lint, license]
     if: success()
     steps:
       - name: "🛒 Checkout"
