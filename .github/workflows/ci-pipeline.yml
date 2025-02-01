@@ -20,6 +20,9 @@ jobs:
       - name: "🛒 Checkout"
         uses: actions/checkout@v4
 
+      - name: "Dump github context"
+        run: echo "${{ toJson(github) }}"
+
       - name: "🐍 Set up Poetry"
         uses: tomy0000000/actions/python-poetry-install@main
         with:
