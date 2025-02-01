@@ -5,6 +5,7 @@ on:
     branches:
       - "develop"
     paths:
+      - ".github/**"
       - "k_backend/**"
       - "pyproject.toml"
       - "poetry.lock"
