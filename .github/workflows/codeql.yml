@@ -1,0 +1,40 @@
+name: "📊 CodeQL"
+
+on:
+  push:
+    branches:
+      - "main"
+      - "develop"
+    paths:
+      - "k_backend/**"
+  pull_request:
+    branches:
+      - "develop"
+    paths:
+      - "k_backend/**"
+
+jobs:
+  analyze:
+    name: "📊 Analyze"
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["python"]
+
+    steps:
+      - name: "🛒 Checkout"
+        uses: actions/checkout@v4
+
+      - name: "⚙️ Initialize"
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: "📊 Analyze"
+        uses: github/codeql-action/analyze@v3
