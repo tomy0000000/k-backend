@@ -5,7 +5,7 @@ from fastapi.responses import RedirectResponse
 from .core.config import settings
 from .core.db import alembic_upgrade
 from .routers import routers, tags
-from .util import KustomJSONResponse
+from .util import KustomJSONResponse, custom_generate_unique_id
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -18,6 +18,7 @@ app = FastAPI(
         "name": "MIT",
         "url": "https://github.com/tomy0000000/K-Backend/blob/main/LICENSE",
     },
+    generate_unique_id_function=custom_generate_unique_id,
 )
 
 app.add_middleware(
@@ -33,6 +34,6 @@ for router in routers:
     app.include_router(router)
 
 
-@app.get("/", include_in_schema=False)
+@app.get("/", include_in_schema=False, tags=["root"])
 async def redirect_to_swagger() -> RedirectResponse:
     return RedirectResponse("docs")
