@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from sqlmodel import Session, select
 
 from ..schemas.payment import Transaction
@@ -5,7 +7,7 @@ from ..schemas.payment import Transaction
 
 def get_transactions(
     session: Session, account_id: int | None = None
-) -> list[Transaction]:
+) -> Sequence[Transaction]:
     scalar = select(Transaction)
     if account_id:
         scalar = scalar.where(Transaction.account_id == account_id)

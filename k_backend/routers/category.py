@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends
+from collections.abc import Sequence
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
 from ..auth import get_client
 from ..core.db import get_session
 from ..schemas.category import (
     Category,
+    CategoryBase,
     CategoryCreate,
     CategoryRead,
     CategoryReadWithChildren,
@@ -25,8 +28,10 @@ category_router = APIRouter(
 
 
 @category_router.post("", name="Create Category", response_model=CategoryRead)
-def create(*, session: Session = Depends(get_session), category: CategoryCreate):
-    db_category = Category.from_orm(category)
+def create(
+    *, session: Session = Depends(get_session), category: CategoryCreate
+) -> CategoryBase:
+    db_category = Category.model_validate(category)
     session.add(db_category)
     session.commit()
     session.refresh(db_category)
@@ -36,9 +41,12 @@ def create(*, session: Session = Depends(get_session), category: CategoryCreate)
 @category_router.get(
     "", name="Read Categories", response_model=list[CategoryReadWithChildren]
 )
-def reads(*, session: Session = Depends(get_session)):
+def reads(*, session: Session = Depends(get_session)) -> Sequence[CategoryBase]:
     categories = session.exec(
-        select(Category).where(Category.parent_id.is_(None))
+        select(Category).where(
+            # https://github.com/fastapi/sqlmodel/issues/109
+            Category.parent_id == None,  # noqa E711 Comparison to `None` should be `cond is None`.
+        )
     ).all()
     return categories
 
@@ -46,13 +54,17 @@ def reads(*, session: Session = Depends(get_session)):
 @category_router.get(
     "/{id}", name="Read Category", response_model=CategoryReadWithChildren
 )
-def read(*, session: Session = Depends(get_session), id: int):
-    category = session.query(Category).get(id)
+def read(*, session: Session = Depends(get_session), id: int) -> CategoryBase:
+    category = session.get(Category, id)
+    if category is None:
+        raise HTTPException(status_code=404, detail="Category not found")
     return category
 
 
 @category_router.patch("", name="Update Category", response_model=CategoryRead)
-def update(*, session: Session = Depends(get_session), category: Category):
+def update(
+    *, session: Session = Depends(get_session), category: Category
+) -> CategoryBase:
     session.merge(category)
     session.commit()
     session.refresh(category)

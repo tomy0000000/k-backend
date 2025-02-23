@@ -5,12 +5,17 @@ from zoneinfo import ZoneInfo
 
 import simplejson
 from fastapi.responses import JSONResponse
+from fastapi.routing import APIRoute
 from pydantic import BaseModel
 
 PYDANTIC_JSON_ENCODERS = {
     Decimal: lambda d: d,
     ZoneInfo: lambda z: str(z),
 }
+
+
+def custom_generate_unique_id(route: APIRoute) -> str:
+    return f"{route.tags[0]}-{route.name}"
 
 
 def handle_special_types(obj: Any) -> Any:

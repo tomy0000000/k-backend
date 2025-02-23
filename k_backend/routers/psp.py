@@ -1,9 +1,11 @@
+from collections.abc import Sequence
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
 from ..auth import get_client
 from ..core.db import get_session
-from ..schemas.psp import PSP, PSPCreate, PSPRead
+from ..schemas.psp import PSP, PSPBase, PSPCreate, PSPRead
 
 TAG_NAME = "Payment Service Provider"
 tag = {
@@ -20,8 +22,8 @@ psp_router = APIRouter(
 
 
 @psp_router.post("", name="Create Payment Service Provider", response_model=PSPRead)
-def create(*, session: Session = Depends(get_session), psp: PSPCreate):
-    db_psp = PSP.from_orm(psp)
+def create(*, session: Session = Depends(get_session), psp: PSPCreate) -> PSPBase:
+    db_psp = PSP.model_validate(psp)
     session.add(db_psp)
     session.commit()
     session.refresh(db_psp)
@@ -29,6 +31,6 @@ def create(*, session: Session = Depends(get_session), psp: PSPCreate):
 
 
 @psp_router.get("", name="Read Payment Service Providers", response_model=list[PSPRead])
-def reads(*, session: Session = Depends(get_session)):
+def reads(*, session: Session = Depends(get_session)) -> Sequence[PSPBase]:
     psps = session.exec(select(PSP)).all()
     return psps

@@ -1,10 +1,13 @@
+from collections.abc import Sequence
+from decimal import Decimal
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
 from ..auth import get_client
 from ..core.db import get_session
-from ..schemas.account import Account, AccountCreate, AccountRead
+from ..schemas.account import Account, AccountBase, AccountCreate, AccountRead
 
 TAG_NAME = "Account"
 tag = {
@@ -21,10 +24,12 @@ account_router = APIRouter(
 
 
 @account_router.post("", name="Create Account", response_model=AccountRead)
-def create(*, session: Session = Depends(get_session), account: AccountCreate):
+def create(
+    *, session: Session = Depends(get_session), account: AccountCreate
+) -> AccountBase:
     try:
-        account.balance = 0
-        db_account = Account.from_orm(account)
+        account.balance = Decimal()
+        db_account = Account.model_validate(account)
         session.add(db_account)
         session.commit()
         session.refresh(db_account)
@@ -36,13 +41,13 @@ def create(*, session: Session = Depends(get_session), account: AccountCreate):
 
 
 @account_router.get("", name="Read Accounts", response_model=list[AccountRead])
-def reads(*, session: Session = Depends(get_session)):
+def reads(*, session: Session = Depends(get_session)) -> Sequence[AccountBase]:
     accounts = session.exec(select(Account)).all()
     return accounts
 
 
 @account_router.patch("", name="Update Account", response_model=AccountRead)
-def update(*, session: Session = Depends(get_session), account: Account):
+def update(*, session: Session = Depends(get_session), account: Account) -> AccountBase:
     session.merge(account)
     session.commit()
     session.refresh(account)

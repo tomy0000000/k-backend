@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlmodel import Session, select
 
@@ -5,7 +7,9 @@ from ..auth import get_client
 from ..core.db import get_session
 from ..schemas.tw_invoice import (
     Invoice,
+    InvoiceBase,
     InvoiceDetail,
+    InvoiceDetailBase,
     InvoiceDetailRead,
     InvoiceDetailUpdated,
     InvoiceDetailWrite,
@@ -35,12 +39,10 @@ invoice_router = APIRouter(
 )
 
 
-@invoice_router.post(
-    "", name="Create or Update Invoices", response_model=InvoiceWriteResponse
-)
+@invoice_router.post("", name="Create or Update Invoices")
 def create_or_update(
     *, session: Session = Depends(get_session), invoices: list[InvoiceWrite]
-):
+) -> InvoiceWriteResponse:
     """
     Create or update invoices
 
@@ -53,7 +55,7 @@ def create_or_update(
         db_invoice = session.get(Invoice, invoice.number)
         if not db_invoice:
             # Create new invoice
-            db_invoice = Invoice.from_orm(invoice)
+            db_invoice = Invoice.model_validate(invoice)
             session.add(db_invoice)
             session.commit()
             session.refresh(db_invoice)
@@ -78,30 +80,26 @@ def create_or_update(
 
 
 @invoice_router.get("", name="Read Invoices", response_model=list[InvoiceRead])
-def reads(*, session: Session = Depends(get_session)):
+def reads(*, session: Session = Depends(get_session)) -> Sequence[InvoiceBase]:
     invoices = session.exec(select(Invoice)).all()
     return invoices
 
 
 @invoice_router.patch("", name="Update Invoice", response_model=InvoiceUpdated)
-def update(*, session: Session = Depends(get_session), invoice: Invoice):
+def update(*, session: Session = Depends(get_session), invoice: Invoice) -> InvoiceBase:
     session.merge(invoice)
     session.commit()
     session.refresh(invoice)
     return invoice
 
 
-@invoice_router.post(
-    "/{number}",
-    name="Create or Update Invoice Details",
-    response_model=InvoiceDetailWriteResponse,
-)
+@invoice_router.post("/{number}", name="Create or Update Invoice Details")
 def create_or_update_details(
     *,
     session: Session = Depends(get_session),
     number: str = Path(example="AB12345678"),
     invoice_details: list[InvoiceDetailWrite],
-):
+) -> InvoiceDetailWriteResponse:
     """
     Create or update invoice details
 
@@ -120,7 +118,7 @@ def create_or_update_details(
         if not db_detail:
             # Create new detail
             detail.invoice_number = number
-            db_detail = InvoiceDetail.from_orm(detail)
+            db_detail = InvoiceDetail.model_validate(detail)
             session.add(db_detail)
             session.commit()
             session.refresh(db_detail)
@@ -148,8 +146,10 @@ def create_or_update_details(
 @invoice_router.get(
     "/{number}", name="Read Invoice Details", response_model=list[InvoiceDetailRead]
 )
-def read_details(*, session: Session = Depends(get_session), number: str):
-    details = (
-        session.query(InvoiceDetail).where(InvoiceDetail.invoice_number == number).all()
-    )
+def read_details(
+    *, session: Session = Depends(get_session), number: str
+) -> Sequence[InvoiceDetailBase]:
+    details = session.exec(
+        select(InvoiceDetail).where(InvoiceDetail.invoice_number == number)
+    ).all()
     return details
