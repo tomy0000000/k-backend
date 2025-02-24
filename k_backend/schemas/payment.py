@@ -7,7 +7,6 @@ import sqlalchemy
 from pydantic_extra_types.timezone_name import TimeZoneName
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
-from ..util import PYDANTIC_JSON_ENCODERS
 from ._custom_types import SATimezone
 
 if TYPE_CHECKING:
@@ -61,9 +60,6 @@ class PaymentCreate(PaymentBase):
 class PaymentRead(PaymentBase):
     id: int
     total: Decimal
-
-    class Config:
-        json_encoders = PYDANTIC_JSON_ENCODERS
 
 
 #
@@ -133,9 +129,6 @@ class TransactionRead(TransactionBase):
     payment_id: int
     timestamp: datetime
     timezone: TimeZoneName
-
-    class Config:
-        json_encoders = PYDANTIC_JSON_ENCODERS
 
 
 #

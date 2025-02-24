@@ -3,8 +3,6 @@ from typing import TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from ..util import PYDANTIC_JSON_ENCODERS
-
 if TYPE_CHECKING:
     from .payment import Transaction
 
@@ -29,9 +27,6 @@ class AccountCreate(AccountBase):
 class AccountRead(AccountBase):
     id: int
     balance: Decimal
-
-    class Config:
-        json_encoders = PYDANTIC_JSON_ENCODERS
 
 
 class Currency(SQLModel, table=True):
