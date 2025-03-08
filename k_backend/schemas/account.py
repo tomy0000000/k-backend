@@ -5,7 +5,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from .currency import Currency
-    from .payment import Transaction
+    from .transaction import Transaction
 
 
 class AccountBase(SQLModel):

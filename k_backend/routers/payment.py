@@ -12,16 +12,15 @@ from k_backend.schemas.account import Account
 
 from ..auth import get_client
 from ..core.db import get_session
+from ..schemas.api_models import PaymentCreateDetailed, PaymentReadDetailed
 from ..schemas.payment import (
     Payment,
     PaymentBase,
-    PaymentCreateDetailed,
     PaymentEntry,
     PaymentRead,
-    PaymentReadDetailed,
     PaymentType,
-    Transaction,
 )
+from ..schemas.transaction import Transaction
 
 TAG_NAME = "Payment"
 tag = {

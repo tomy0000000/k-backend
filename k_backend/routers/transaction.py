@@ -6,7 +6,7 @@ from sqlmodel import Session
 from ..auth import get_client
 from ..core.db import get_session
 from ..crud.transaction import get_transactions
-from ..schemas.payment import TransactionBase, TransactionRead
+from ..schemas.transaction import TransactionBase, TransactionRead
 
 TAG_NAME = "Transaction"
 tag = {

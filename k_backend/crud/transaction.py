@@ -2,7 +2,7 @@ from collections.abc import Sequence
 
 from sqlmodel import Session, select
 
-from ..schemas.payment import Transaction
+from ..schemas.transaction import Transaction
 
 
 def get_transactions(
