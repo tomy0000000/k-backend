@@ -40,7 +40,7 @@ class PaymentBase(SQLModel):
         title="Local timestamp, or timezone-aware timestamp",
     )
     timezone: TimeZoneName = Field(sa_column=Column(SATimezone(), nullable=False))
-    description: str | None
+    description: str | None = None
 
 
 class Payment(PaymentBase, table=True):
@@ -54,7 +54,7 @@ class Payment(PaymentBase, table=True):
 
 
 class PaymentCreate(PaymentBase):
-    total: Decimal | None
+    total: Decimal | None = None
 
 
 class PaymentRead(PaymentBase):
@@ -68,11 +68,11 @@ class PaymentRead(PaymentBase):
 
 
 class PaymentEntryBase(SQLModel):
-    payment_id: int = Field(foreign_key="payment.id")
+    payment_id: int | None = Field(foreign_key="payment.id", default=None)
     category_id: int = Field(foreign_key="category.id")
     amount: Decimal
     quantity: int
-    description: str | None
+    description: str | None = None
 
 
 class PaymentEntry(PaymentEntryBase, table=True):
@@ -99,11 +99,11 @@ class PaymentEntryRead(PaymentEntryBase):
 
 class TransactionBase(SQLModel):
     account_id: int = Field(primary_key=True, foreign_key="account.id")
-    payment_id: int | None
+    payment_id: int | None = None
     amount: Decimal
     timestamp: datetime | None
-    timezone: TimeZoneName | None
-    description: str | None
+    timezone: TimeZoneName | None = None
+    description: str | None = None
     reconcile: bool = False
     psp_id: int | None = Field(foreign_key="payment_service_providers.id", default=None)
     psp_reconcile: bool | None = None

@@ -21,7 +21,7 @@ class Account(AccountBase, table=True):
 
 
 class AccountCreate(AccountBase):
-    balance: Decimal | None
+    balance: Decimal | None = None
 
 
 class AccountRead(AccountBase):

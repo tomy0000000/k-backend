@@ -26,20 +26,20 @@ class InvoiceBase(SQLModel):
         }
     )
 
-    number: str | None
-    card_type: str | None
-    card_number: str | None
-    seller_name: str | None
-    status: str | None
-    donatable: bool | None
-    amount: str | None
-    period: str | None
-    donate_mark: int | None
-    seller_tax_id: str | None
-    seller_address: str | None
-    buyer_tax_id: str | None
-    currency: str | None
-    timestamp: datetime | None
+    number: str | None = None
+    card_type: str | None = None
+    card_number: str | None = None
+    seller_name: str | None = None
+    status: str | None = None
+    donatable: bool | None = None
+    amount: str | None = None
+    period: str | None = None
+    donate_mark: int | None = None
+    seller_tax_id: str | None = None
+    seller_address: str | None = None
+    buyer_tax_id: str | None = None
+    currency: str | None = None
+    timestamp: datetime | None = None
 
 
 class InvoiceBaseWithId(InvoiceBase):
@@ -107,12 +107,12 @@ class InvoiceDetailBase(SQLModel):
         }
     )
 
-    invoice_number: str | None
-    row_number: int | None
-    description: str | None
-    quantity: str | None
-    unit_price: str | None
-    amount: str | None
+    invoice_number: str | None = None
+    row_number: int | None = None
+    description: str | None = None
+    quantity: str | None = None
+    unit_price: str | None = None
+    amount: str | None = None
 
 
 class InvoiceDetailBaseWithId(InvoiceDetailBase):
