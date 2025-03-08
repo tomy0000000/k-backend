@@ -16,7 +16,7 @@ class CurrencyFactory(SQLAlchemyModelFactory):
         model = Currency
         sqlalchemy_session_persistence = "commit"
 
-    code = factory.Faker("currency_code")
+    code = factory.Sequence(lambda n: f"CUR{n:03d}")
     name = factory.Faker("currency_name")
     symbol = factory.Faker("currency_symbol")
 
