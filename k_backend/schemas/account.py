@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
+    from .currency import Currency
     from .payment import Transaction
 
 
@@ -27,14 +28,6 @@ class AccountCreate(AccountBase):
 class AccountRead(AccountBase):
     id: int
     balance: Decimal
-
-
-class Currency(SQLModel, table=True):
-    __tablename__ = "currency"
-    code: str = Field(primary_key=True)
-    name: str
-    symbol: str
-    accounts: list[Account] = Relationship(back_populates="currency")
 
 
 class AccountUpdate(SQLModel):
