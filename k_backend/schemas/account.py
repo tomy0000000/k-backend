@@ -21,7 +21,7 @@ class Account(AccountBase, table=True):
 
 
 class AccountCreate(AccountBase):
-    balance: Decimal | None = None
+    pass
 
 
 class AccountRead(AccountBase):
@@ -35,3 +35,8 @@ class Currency(SQLModel, table=True):
     name: str
     symbol: str
     accounts: list[Account] = Relationship(back_populates="currency")
+
+
+class AccountUpdate(SQLModel):
+    name: str | None = None
+    currency_code: str | None = None

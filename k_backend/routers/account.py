@@ -1,13 +1,20 @@
 from collections.abc import Sequence
-from decimal import Decimal
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic_core import PydanticCustomError
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, select
+from sqlmodel import Session
+
+from k_backend.crud.account import (
+    create_account,
+    read_account,
+    read_accounts,
+    update_account,
+)
 
 from ..auth import get_client
 from ..core.db import get_session
-from ..schemas.account import Account, AccountBase, AccountCreate, AccountRead
+from ..schemas.account import AccountBase, AccountCreate, AccountRead, AccountUpdate
 
 TAG_NAME = "Account"
 tag = {
@@ -28,37 +35,39 @@ def create(
     *, session: Session = Depends(get_session), account: AccountCreate
 ) -> AccountBase:
     try:
-        account.balance = Decimal()
-        db_account = Account.model_validate(account)
-        session.add(db_account)
-        session.commit()
-        session.refresh(db_account)
-        return db_account
+        return create_account(session, account)
     except IntegrityError as err:
-        raise ValueError(
-            f"Currency {db_account.currency_code} is not available"
+        raise PydanticCustomError(
+            "currency_not_found",
+            f"Currency with code: {account.currency_code} does not exist",
+            {"loc": ("body", "currency_code")},
         ) from err
+
+
+@account_router.get("/{account_id}", name="Read Account", response_model=AccountRead)
+def read(*, session: Session = Depends(get_session), account_id: int) -> AccountBase:
+    account = read_account(session, account_id)
+    if account is None:
+        raise PydanticCustomError(
+            "account_not_found",
+            f"Account with id: {account_id} does not exist",
+            {"loc": ("path", "account_id")},
+        )
+    return account
 
 
 @account_router.get("", name="Read Accounts", response_model=list[AccountRead])
 def reads(*, session: Session = Depends(get_session)) -> Sequence[AccountBase]:
-    accounts = session.exec(select(Account)).all()
-    return accounts
+    return read_accounts(session)
 
 
-@account_router.patch("", name="Update Account", response_model=AccountRead)
-def update(*, session: Session = Depends(get_session), account: Account) -> AccountBase:
-    session.merge(account)
-    session.commit()
-    session.refresh(account)
-    return account
-
-
-# TODO: Think about how this should work
-# @account_router.delete("/{id}")
-# def delete_account(*, session: Session = Depends(get_session), id: int):
-#     account = session.query(Account).get(id)
-#     if account is None:
-#         raise HTTPException(status_code=404, detail="Account not found")
-#     session.delete(account)
-#     session.commit()
+@account_router.patch(
+    "/{account_id}", name="Update Account", response_model=AccountRead
+)
+def update(
+    *, session: Session = Depends(get_session), account_id: int, account: AccountUpdate
+) -> AccountBase:
+    try:
+        return update_account(session, account_id, account)
+    except ValueError as err:
+        raise HTTPException(status_code=404, detail=err.args[0]) from err
