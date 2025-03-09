@@ -1,6 +1,5 @@
 from collections.abc import Sequence
 from datetime import date
-from decimal import Decimal
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.openapi.models import Example
@@ -12,6 +11,7 @@ from k_backend.crud.payment import (
     read_payment,
     read_payments,
 )
+from k_backend.logics.payment import validate_total
 from k_backend.schemas.account import Account
 
 from ..auth import get_client
@@ -209,46 +209,11 @@ def create(
     session: Session = Depends(get_session),
     body: PaymentCreateDetailed = Body(openapi_examples=EXAMPLES["create"]),
 ) -> PaymentBase:
-    # Calculate total
-    if body.payment.type in (PaymentType.Expense, PaymentType.Income):
-        if body.payment.total is not None:
-            raise PydanticCustomError(
-                "total_should_not_be_provided",
-                "Total field is not allowed for expense or income",
-                {"loc": ("body", "payment", "total")},
-            )
-        entries_total = sum([entry.amount * entry.quantity for entry in body.entries])
-        transaction_total = Decimal(
-            sum([transaction.amount for transaction in body.transactions])
-        )
-        if entries_total != transaction_total:
-            raise PydanticCustomError(
-                "total_mismatch",
-                f"Entries total {entries_total} does not"
-                f" match transaction total {transaction_total}",
-                {"loc": ("body", "__root__")},
-            )
-        body.payment.total = transaction_total
-    elif body.payment.type is PaymentType.Transfer:
-        if body.payment.total is None:
-            raise PydanticCustomError(
-                "missing_total",
-                "Total field is required for transfer",
-                {"loc": ("body", "payment", "total")},
-            )
-    elif body.payment.type is PaymentType.Exchange:
-        if body.payment.total is None:
-            raise PydanticCustomError(
-                "missing_total",
-                "Total field is required for exchange",
-                {"loc": ("body", "payment", "total")},
-            )
-    else:
-        raise PydanticCustomError(
-            "unknown_payment_type",
-            f"Unknown type {body.payment.type}",
-            {"loc": ("body", "payment", "type")},
-        )
+    # Validate total
+    try:
+        validate_total(body)
+    except ValueError as err:
+        raise HTTPException(status_code=400, detail=err.args[0]) from err
 
     # Store payment
     db_payment = create_payment(session, body.payment)
