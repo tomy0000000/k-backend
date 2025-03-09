@@ -7,7 +7,7 @@ from sqlmodel import Session, select
 from ..schemas.payment import Payment, PaymentEntry
 
 
-def get_payments(
+def read_payments(
     session: Session, payment_date: date | None = None, category_id: int | None = None
 ) -> Sequence[Payment]:
     scalar = select(Payment).distinct()

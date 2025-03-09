@@ -7,7 +7,7 @@ from fastapi.openapi.models import Example
 from pydantic_core import PydanticCustomError
 from sqlmodel import Session
 
-from k_backend.crud.payment import get_payments
+from k_backend.crud.payment import read_payments
 from k_backend.schemas.account import Account
 
 from ..auth import get_client
@@ -301,7 +301,7 @@ def reads(
     payment_date: date | None = None,
     category_id: int | None = None,
 ) -> Sequence[PaymentBase]:
-    return get_payments(session, payment_date, category_id)
+    return read_payments(session, payment_date, category_id)
 
 
 @payment_router.patch("", name="Update Payment", response_model=PaymentRead)
