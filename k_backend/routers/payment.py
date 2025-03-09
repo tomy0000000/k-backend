@@ -11,6 +11,7 @@ from k_backend.crud.payment import (
     read_payment,
     read_payments,
 )
+from k_backend.crud.payment_entry import create_payment_entries
 from k_backend.logics.payment import validate_total
 from k_backend.schemas.account import Account
 
@@ -20,7 +21,6 @@ from ..schemas.api_models import PaymentCreateDetailed, PaymentReadDetailed
 from ..schemas.payment import (
     Payment,
     PaymentBase,
-    PaymentEntry,
     PaymentRead,
     PaymentType,
 )
@@ -220,11 +220,7 @@ def create(
     payment_id = PaymentRead.model_validate(db_payment).id
 
     # Store entries
-    for entry in body.entries:
-        entry.payment_id = payment_id
-        db_entry = PaymentEntry.model_validate(entry)
-        session.add(db_entry)
-    session.commit()
+    create_payment_entries(session, body.entries, payment_id)
 
     for index, transaction in enumerate(body.transactions):
         # Modify account balance
