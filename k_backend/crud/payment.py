@@ -7,6 +7,10 @@ from sqlmodel import Session, select
 from ..schemas.payment import Payment, PaymentEntry
 
 
+def read_payment(session: Session, payment_id: int) -> Payment | None:
+    return session.get(Payment, payment_id)
+
+
 def read_payments(
     session: Session, payment_date: date | None = None, category_id: int | None = None
 ) -> Sequence[Payment]:

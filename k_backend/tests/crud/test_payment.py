@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlmodel import Session
 
-from k_backend.crud.payment import read_payments
+from k_backend.crud.payment import read_payment, read_payments
 from k_backend.tests.factories import (
     CategoryFactory,
     PaymentEntryFactory,
@@ -10,14 +10,19 @@ from k_backend.tests.factories import (
 )
 
 
-def test_get_all_payments(session: Session):
+def test_read_payment(session: Session):
+    payment = PaymentFactory()
+    assert read_payment(session, payment.id) == payment
+
+
+def test_read_payments_all(session: Session):
     for _ in range(10):
         PaymentFactory()
 
     assert len(read_payments(session)) == 10
 
 
-def test_get_payment_by_date(session: Session):
+def test_read_payments_by_date(session: Session):
     PaymentFactory(timestamp=datetime(2025, 1, 1))
     PaymentFactory(timestamp=datetime(2025, 1, 2))
 
@@ -25,7 +30,7 @@ def test_get_payment_by_date(session: Session):
     assert len(read_payments(session, payment_date="2025-01-02")) == 1
 
 
-def test_get_payment_by_category(session: Session):
+def test_read_payments_by_category(session: Session):
     category_1 = CategoryFactory()
     category_2 = CategoryFactory()
     category_3 = CategoryFactory()

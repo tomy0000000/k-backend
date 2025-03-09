@@ -7,7 +7,7 @@ from fastapi.openapi.models import Example
 from pydantic_core import PydanticCustomError
 from sqlmodel import Session
 
-from k_backend.crud.payment import read_payments
+from k_backend.crud.payment import read_payment, read_payments
 from k_backend.schemas.account import Account
 
 from ..auth import get_client
@@ -294,6 +294,16 @@ def create(
     return new_payment
 
 
+@payment_router.get(
+    "/{payment_id}", name="Read Payment", response_model=PaymentReadDetailed
+)
+def read(*, session: Session = Depends(get_session), payment_id: int) -> PaymentBase:
+    payment = read_payment(session, payment_id)
+    if payment is None:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    return payment
+
+
 @payment_router.get("", name="Read Payments", response_model=list[PaymentReadDetailed])
 def reads(
     *,
@@ -309,14 +319,6 @@ def update(*, session: Session = Depends(get_session), payment: Payment) -> Paym
     session.merge(payment)
     session.commit()
     session.refresh(payment)
-    return payment
-
-
-@payment_router.get("/{id}", name="Read Payment", response_model=PaymentReadDetailed)
-def read(*, session: Session = Depends(get_session), id: int) -> PaymentBase:
-    payment = session.get(Payment, id)
-    if payment is None:
-        raise HTTPException(status_code=404, detail="Payment not found")
     return payment
 
 
