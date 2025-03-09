@@ -7,7 +7,11 @@ from fastapi.openapi.models import Example
 from pydantic_core import PydanticCustomError
 from sqlmodel import Session
 
-from k_backend.crud.payment import read_payment, read_payments
+from k_backend.crud.payment import (
+    create_payment,
+    read_payment,
+    read_payments,
+)
 from k_backend.schemas.account import Account
 
 from ..auth import get_client
@@ -247,10 +251,7 @@ def create(
         )
 
     # Store payment
-    db_payment = Payment.model_validate(body.payment)
-    session.add(db_payment)
-    session.commit()
-    session.refresh(db_payment)
+    db_payment = create_payment(session, body.payment)
     payment_id = PaymentRead.model_validate(db_payment).id
 
     # Store entries

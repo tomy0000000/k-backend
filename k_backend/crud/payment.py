@@ -4,7 +4,19 @@ from datetime import date
 from sqlalchemy import func
 from sqlmodel import Session, select
 
-from ..schemas.payment import Payment, PaymentEntry
+from ..schemas.payment import (
+    Payment,
+    PaymentBase,
+    PaymentCreate,
+    PaymentEntry,
+)
+
+
+def create_payment(session: Session, payment: PaymentCreate) -> PaymentBase:
+    session.add(payment)
+    session.commit()
+    session.refresh(payment)
+    return payment
 
 
 def read_payment(session: Session, payment_id: int) -> Payment | None:

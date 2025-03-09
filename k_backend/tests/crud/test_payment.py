@@ -2,12 +2,24 @@ from datetime import datetime
 
 from sqlmodel import Session
 
-from k_backend.crud.payment import read_payment, read_payments
+from k_backend.crud.payment import create_payment, read_payment, read_payments
 from k_backend.tests.factories import (
     CategoryFactory,
     PaymentEntryFactory,
     PaymentFactory,
 )
+
+
+def test_create_payment(session: Session):
+    payment = PaymentFactory.build()
+    db_payment = create_payment(session, payment)
+
+    assert db_payment.id is not None
+    assert db_payment.description == payment.description
+    assert db_payment.timestamp == payment.timestamp
+    assert db_payment.timezone == payment.timezone
+    assert db_payment.total == payment.total
+    assert db_payment.type == payment.type
 
 
 def test_read_payment(session: Session):
