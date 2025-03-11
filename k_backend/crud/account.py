@@ -27,16 +27,31 @@ def read_accounts(
     return session.exec(statement).all()
 
 
-def update_account(
-    session: Session, account_id: int, account: AccountUpdate
-) -> Account:
-    db_account = session.get(Account, account_id)
-    if not db_account:
-        raise ValueError(f"Account with id {account_id} not found")
-    account_data = account.model_dump(exclude_unset=True)
-    db_account.sqlmodel_update(account_data)
+def update_accounts(
+    session: Session, account_ids: list[int], accounts: list[AccountUpdate]
+) -> Sequence[Account]:
+    # Verify account_ids and accounts have the same length
+    if len(account_ids) != len(accounts):
+        raise ValueError("account_ids and accounts must have the same length")
 
-    session.add(db_account)
+    # Verify all accounts are valid
+    db_accounts = _verify_account_ids(session, account_ids)
+
+    # Update accounts
+    for db_account, account in zip(db_accounts, accounts, strict=True):
+        account_data = account.model_dump(exclude_unset=True)
+        db_account.sqlmodel_update(account_data)
+
+    session.add_all(db_accounts)
     session.commit()
-    session.refresh(db_account)
-    return db_account
+
+    return read_accounts(session, account_ids)
+
+
+def _verify_account_ids(session: Session, account_ids: list[int]) -> Sequence[Account]:
+    db_accounts = read_accounts(session, account_ids)
+    missing_ids = set(account_ids) - {account.id for account in db_accounts}
+    if missing_ids:
+        raise ValueError(f"Account id(s) not found: {missing_ids}")
+
+    return db_accounts

@@ -1,14 +1,15 @@
-from decimal import Decimal
+import re
 from unittest.mock import patch
 
 import pytest
 from sqlmodel import Session
 
 from k_backend.crud.account import (
+    _verify_account_ids,
     create_account,
     read_account,
     read_accounts,
-    update_account,
+    update_accounts,
 )
 from k_backend.tests.factories import AccountFactory
 
@@ -72,27 +73,43 @@ def test_read_accounts_for_update(session: Session):
         assert "FOR UPDATE" in statement
 
 
-def test_update_account(session: Session):
-    account = AccountFactory()
+def test_update_accounts(session: Session):
+    accounts = AccountFactory.create_batch(10)
+    account_updates = AccountFactory.build_batch(10)
 
-    db_account = read_account(session, account.id)
-    assert db_account.id == account.id
-    assert db_account.name == account.name
-    assert db_account.currency_code == account.currency_code
-    assert db_account.balance == account.balance
+    account_ids = []
+    for account, account_update in zip(accounts, account_updates, strict=True):
+        account_update.id = account.id
+        account_ids.append(account.id)
 
-    account.name = "New Name"
-    account.balance = Decimal("100")
-    new_db_account = update_account(session, account.id, account)
+    updated_accounts = update_accounts(session, account_ids, account_updates)
 
-    assert new_db_account.id == db_account.id
-    assert new_db_account.name == account.name  # Updated
-    assert new_db_account.currency_code == db_account.currency_code
-    assert new_db_account.balance == db_account.balance  # Not updated
+    for account, account_update, updated_account in zip(
+        accounts, account_updates, updated_accounts, strict=True
+    ):
+        assert updated_account.id == account.id
+        assert updated_account.name == account_update.name  # Updated
+        assert updated_account.currency_code == account.currency_code  # Not updated
+        assert updated_account.balance == account.balance  # Not updated
 
 
-def test_update_account_not_found(session: Session):
-    account = AccountFactory.build()
+def test_update_accounts_mismatch_length(session: Session):
+    accounts = AccountFactory.create_batch(10)
+    account_updates = AccountFactory.build_batch(9)
+    account_ids = [account.id for account in accounts]
 
-    with pytest.raises(ValueError, match="Account with id 1 not found"):
-        update_account(session, 1, account)
+    with pytest.raises(ValueError, match="must have the same length"):
+        update_accounts(session, account_ids, account_updates)
+
+
+def test__verify_account_ids(session: Session):
+    accounts = AccountFactory.create_batch(10)
+    account_ids = [account.id for account in accounts]
+
+    db_accounts = _verify_account_ids(session, account_ids)
+    assert len(db_accounts) == 10
+
+
+def test__verify_account_ids_not_found(session: Session):
+    with pytest.raises(ValueError, match=re.escape("Account id(s) not found: {1}")):
+        _verify_account_ids(session, [1])

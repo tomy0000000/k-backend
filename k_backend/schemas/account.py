@@ -32,4 +32,3 @@ class AccountRead(AccountBase):
 
 class AccountUpdate(SQLModel):
     name: str | None = None
-    currency_code: str | None = None

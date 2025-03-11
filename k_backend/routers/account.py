@@ -9,7 +9,7 @@ from k_backend.crud.account import (
     create_account,
     read_account,
     read_accounts,
-    update_account,
+    update_accounts,
 )
 
 from ..auth import get_client
@@ -68,6 +68,6 @@ def update(
     *, session: Session = Depends(get_session), account_id: int, account: AccountUpdate
 ) -> AccountBase:
     try:
-        return update_account(session, account_id, account)
+        return update_accounts(session, [account_id], [account])[0]
     except ValueError as err:
         raise HTTPException(status_code=404, detail=err.args[0]) from err
