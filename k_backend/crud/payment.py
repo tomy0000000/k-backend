@@ -1,8 +1,7 @@
 from collections.abc import Sequence
 from datetime import date
 
-from sqlalchemy import func
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
 from ..schemas.payment import (
     Payment,

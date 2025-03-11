@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-import sqlalchemy
+import sqlmodel
 from pydantic_extra_types.timezone_name import TimeZoneName
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
 
@@ -32,7 +32,7 @@ class PaymentType(enum.Enum):
 
 class PaymentBase(SQLModel):
     type: PaymentType = Field(
-        sa_column=Column(sqlalchemy.Enum(PaymentType), nullable=False)
+        sa_column=Column(sqlmodel.Enum(PaymentType), nullable=False)
     )
     timestamp: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False),
