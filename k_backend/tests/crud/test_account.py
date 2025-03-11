@@ -1,4 +1,5 @@
 from decimal import Decimal
+from unittest.mock import patch
 
 import pytest
 from sqlmodel import Session
@@ -37,10 +38,38 @@ def test_read_account_not_found(session: Session):
 
 
 def test_read_accounts(session: Session):
-    for _ in range(10):
-        AccountFactory()
+    accounts = AccountFactory.create_batch(10)
+    db_accounts = read_accounts(session)
 
-    assert len(read_accounts(session)) == 10
+    assert len(db_accounts) == 10
+    for account, db_account in zip(accounts, db_accounts, strict=True):
+        assert db_account.balance == account.balance
+        assert db_account.currency_code == account.currency_code
+        assert db_account.id == account.id
+        assert db_account.name == account.name
+
+
+def test_read_accounts_by_ids(session: Session):
+    accounts = AccountFactory.create_batch(10)
+    interest_accounts = [accounts[index] for index in range(0, 10, 2)]
+    db_accounts = read_accounts(session, [account.id for account in interest_accounts])
+
+    assert len(db_accounts) == 5
+    for account, db_account in zip(interest_accounts, db_accounts, strict=True):
+        assert db_account.balance == account.balance
+        assert db_account.currency_code == account.currency_code
+        assert db_account.id == account.id
+        assert db_account.name == account.name
+
+
+def test_read_accounts_for_update(session: Session):
+    AccountFactory()
+
+    with patch.object(session, "exec", wraps=session.exec) as mock_exec:
+        read_accounts(session, for_update=True)
+        args = mock_exec.call_args[0]
+        statement = str(args[0])
+        assert "FOR UPDATE" in statement
 
 
 def test_update_account(session: Session):

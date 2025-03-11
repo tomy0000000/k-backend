@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from sqlmodel import Session, select
+from sqlmodel import Integer, Session, cast, select
 
 from ..schemas.account import Account, AccountBase, AccountCreate, AccountUpdate
 
@@ -16,8 +16,15 @@ def read_account(session: Session, account_id: int) -> Account | None:
     return session.get(Account, account_id)
 
 
-def read_accounts(session: Session) -> Sequence[Account]:
-    return session.exec(select(Account)).all()
+def read_accounts(
+    session: Session, account_ids: list[int] | None = None, for_update: bool = False
+) -> Sequence[Account]:
+    statement = select(Account)
+    if account_ids:
+        statement = statement.where(cast(Account.id, Integer).in_(account_ids))
+    if for_update:
+        statement = statement.with_for_update()
+    return session.exec(statement).all()
 
 
 def update_account(
