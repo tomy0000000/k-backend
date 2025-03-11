@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from decimal import Decimal
 
 from sqlmodel import Integer, Session, cast, select
 
@@ -41,6 +42,22 @@ def update_accounts(
     for db_account, account in zip(db_accounts, accounts, strict=True):
         account_data = account.model_dump(exclude_unset=True)
         db_account.sqlmodel_update(account_data)
+
+    session.add_all(db_accounts)
+    session.commit()
+
+    return read_accounts(session, account_ids)
+
+
+def update_account_balances(
+    session: Session, account_amounts: dict[int, Decimal]
+) -> Sequence[Account]:
+    account_ids = list(account_amounts.keys())
+    db_accounts = _verify_account_ids(session, account_ids)
+    id_to_index = {account.id: index for index, account in enumerate(db_accounts)}
+    for account_id, amount in account_amounts.items():
+        db_account = db_accounts[id_to_index[account_id]]
+        db_account.balance += amount
 
     session.add_all(db_accounts)
     session.commit()

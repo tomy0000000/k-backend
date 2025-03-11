@@ -1,4 +1,6 @@
+import random
 import re
+from decimal import Decimal
 from unittest.mock import patch
 
 import pytest
@@ -9,6 +11,7 @@ from k_backend.crud.account import (
     create_account,
     read_account,
     read_accounts,
+    update_account_balances,
     update_accounts,
 )
 from k_backend.tests.factories import AccountFactory
@@ -100,6 +103,26 @@ def test_update_accounts_mismatch_length(session: Session):
 
     with pytest.raises(ValueError, match="must have the same length"):
         update_accounts(session, account_ids, account_updates)
+
+
+def test_update_account_balances(session: Session):
+    accounts = AccountFactory.create_batch(1)
+    account_amounts: dict[int, Decimal] = {}
+    account_balances: dict[int, Decimal] = {}
+    for account in accounts:
+        account_amounts[account.id] = Decimal(random.randint(-100, 100))
+        account_balances[account.id] = account.balance
+
+    updated_accounts = update_account_balances(session, account_amounts)
+
+    for account, updated_account in zip(accounts, updated_accounts, strict=True):
+        balance = account_balances[account.id]
+        amount = account_amounts[account.id]
+
+        assert updated_account.id == account.id
+        assert updated_account.name == account.name
+        assert updated_account.currency_code == account.currency_code
+        assert updated_account.balance == balance + amount
 
 
 def test__verify_account_ids(session: Session):
