@@ -12,7 +12,7 @@ from k_backend.crud.payment import (
     read_payments,
 )
 from k_backend.crud.payment_entry import create_payment_entries
-from k_backend.crud.transaction import create_transaction
+from k_backend.crud.transaction import create_transactions
 from k_backend.logics.payment import validate_total
 from k_backend.schemas.account import Account
 
@@ -244,7 +244,7 @@ def create(
 
         # Store Transactions
         transaction.payment_id = payment_id
-        create_transaction(session, transaction)
+        create_transactions(session, [transaction])
 
     new_payment = session.get(Payment, payment_id)
     if new_payment is None:

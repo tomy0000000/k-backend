@@ -5,11 +5,14 @@ from sqlmodel import Session, select
 from ..schemas.transaction import Transaction, TransactionBase, TransactionCreate
 
 
-def create_transaction(session: Session, txn: TransactionCreate) -> TransactionBase:
-    session.add(txn)
+def create_transactions(
+    session: Session, txns: Sequence[TransactionCreate]
+) -> Sequence[TransactionBase]:
+    session.add_all(txns)
     session.commit()
-    session.refresh(txn)
-    return txn
+    for txn in txns:
+        session.refresh(txn)
+    return txns
 
 
 def get_transactions(
