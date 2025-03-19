@@ -3,7 +3,6 @@ from datetime import date
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.openapi.models import Example
-from pydantic_core import PydanticCustomError
 from sqlmodel import Session
 
 from k_backend.crud.payment import (
@@ -13,18 +12,13 @@ from k_backend.crud.payment import (
 )
 from k_backend.crud.payment_entry import create_payment_entries
 from k_backend.crud.transaction import create_transactions
+from k_backend.logics.account import update_balances_with_transactions
 from k_backend.logics.payment import validate_total
-from k_backend.schemas.account import Account
 
 from ..auth import get_client
 from ..core.db import get_session
 from ..schemas.api_models import PaymentCreateDetailed, PaymentReadDetailed
-from ..schemas.payment import (
-    Payment,
-    PaymentBase,
-    PaymentRead,
-    PaymentType,
-)
+from ..schemas.payment import Payment, PaymentBase, PaymentRead
 
 TAG_NAME = "Payment"
 tag = {
@@ -222,31 +216,15 @@ def create(
     # Store entries
     create_payment_entries(session, body.entries, payment_id)
 
-    for index, transaction in enumerate(body.transactions):
-        # Modify account balance
-        account = session.query(Account).get(transaction.account_id)
-        if not account:
-            raise PydanticCustomError(
-                "account_not_found",
-                f"Account with id: {transaction.account_id} does not exist",
-                {"loc": ("body", "transactions", index, "account_id")},
-            )
-        if body.payment.type is PaymentType.Expense:
-            account.balance -= transaction.amount
-        elif body.payment.type in (
-            PaymentType.Income,
-            PaymentType.Transfer,
-            PaymentType.Exchange,
-        ):
-            account.balance += transaction.amount
-        session.add(account)
-        # TODO: test what'll happen if two transactions with same account_id are added
-
-        # Store Transactions
+    # Modify account balance
+    for transaction in body.transactions:
         transaction.payment_id = payment_id
-        create_transactions(session, [transaction])
+    update_balances_with_transactions(session, body.transactions)
 
-    new_payment = session.get(Payment, payment_id)
+    # Store Transactions
+    create_transactions(session, body.transactions)
+
+    new_payment = read_payment(session, payment_id)
     if new_payment is None:
         raise HTTPException(status_code=500, detail="Failed to create payment")
     return new_payment
