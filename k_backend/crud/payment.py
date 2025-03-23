@@ -11,10 +11,15 @@ from ..schemas.payment import (
 )
 
 
-def create_payment(session: Session, payment: PaymentCreate) -> PaymentBase:
+def create_payment(
+    session: Session, payment: PaymentCreate, commit: bool = True
+) -> PaymentBase:
     session.add(payment)
-    session.commit()
-    session.refresh(payment)
+    if commit:
+        session.commit()
+        session.refresh(payment)
+    else:
+        session.flush()
     return payment
 
 

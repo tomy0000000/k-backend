@@ -10,9 +10,10 @@ from k_backend.tests.factories import (
 )
 
 
-def test_create_payment(session: Session):
+def test_create_payment(session: Session, session_2: Session):
     payment = PaymentFactory.build()
-    db_payment = create_payment(session, payment)
+    create_payment(session, payment)
+    db_payment = read_payment(session_2, payment.id)
 
     assert db_payment.id is not None
     assert db_payment.description == payment.description
@@ -20,6 +21,36 @@ def test_create_payment(session: Session):
     assert db_payment.timezone == payment.timezone
     assert db_payment.total == payment.total
     assert db_payment.type == payment.type
+
+
+def test_create_payment_no_commit(session: Session, session_2: Session):
+    payment = PaymentFactory.build()
+
+    # The payment should be created in the session
+    session_payment = create_payment(session, payment, commit=False)
+    assert session_payment.id is not None  # Auto int should be set
+    assert session_payment.description == payment.description
+    assert session_payment.timestamp == payment.timestamp
+    assert session_payment.timezone == payment.timezone
+    assert session_payment.total == payment.total
+    assert session_payment.type == payment.type
+
+    # The payment should not be visible to other sessions (yet)
+    session_2_payment = read_payment(session_2, payment.id)
+    assert session_2_payment is None
+
+    # Commit the payment from main session
+    session.commit()
+
+    # The payment should now be visible to other sessions
+    session_2_payment = read_payment(session_2, payment.id)
+    assert session_2_payment is not None
+    assert session_2_payment.id == payment.id
+    assert session_2_payment.description == payment.description
+    assert session_2_payment.timestamp == payment.timestamp
+    assert session_2_payment.timezone == payment.timezone
+    assert session_2_payment.total == payment.total
+    assert session_2_payment.type == payment.type
 
 
 def test_read_payment(session: Session):

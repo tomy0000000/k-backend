@@ -210,7 +210,7 @@ def create(
         raise HTTPException(status_code=400, detail=err.args[0]) from err
 
     # Store payment
-    db_payment = create_payment(session, body.payment)
+    db_payment = create_payment(session, body.payment, commit=False)
     payment_id = PaymentRead.model_validate(db_payment).id
 
     # Store entries
