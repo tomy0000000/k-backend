@@ -221,7 +221,7 @@ def create(
     # Modify account balance
     for transaction in body.transactions:
         transaction.payment_id = payment_id
-    update_balances_with_transactions(session, body.transactions)
+    update_balances_with_transactions(session, body.transactions, commit=False)
 
     # Store Transactions
     create_transactions(session, body.transactions, commit=False)

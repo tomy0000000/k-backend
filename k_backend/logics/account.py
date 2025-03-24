@@ -7,7 +7,9 @@ from ..schemas.transaction import TransactionCreate
 
 
 def update_balances_with_transactions(
-    session: Session, transactions: list[TransactionCreate]
+    session: Session,
+    transactions: list[TransactionCreate],
+    commit: bool = True,
 ) -> None:
     # Create a map of account_id -> amount
     account_amounts: dict[int, Decimal] = {}
@@ -18,4 +20,4 @@ def update_balances_with_transactions(
         account_amounts[account_id] += transaction.amount
 
     # Update the account balance
-    update_account_balances(session, account_amounts)
+    update_account_balances(session, account_amounts, commit=commit)

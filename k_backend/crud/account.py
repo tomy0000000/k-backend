@@ -50,7 +50,9 @@ def update_accounts(
 
 
 def update_account_balances(
-    session: Session, account_amounts: dict[int, Decimal]
+    session: Session,
+    account_amounts: dict[int, Decimal],
+    commit: bool = True,
 ) -> Sequence[Account]:
     account_ids = list(account_amounts.keys())
     db_accounts = _verify_account_ids(session, account_ids)
@@ -60,13 +62,18 @@ def update_account_balances(
         db_account.balance += amount
 
     session.add_all(db_accounts)
-    session.commit()
+    if commit:
+        session.commit()
+        for account in db_accounts:
+            session.refresh(account)
+    else:
+        session.flush()
 
     return read_accounts(session, account_ids)
 
 
 def _verify_account_ids(session: Session, account_ids: list[int]) -> Sequence[Account]:
-    db_accounts = read_accounts(session, account_ids)
+    db_accounts = read_accounts(session, account_ids, for_update=True)
     missing_ids = set(account_ids) - {account.id for account in db_accounts}
     if missing_ids:
         raise ValueError(f"Account id(s) not found: {missing_ids}")

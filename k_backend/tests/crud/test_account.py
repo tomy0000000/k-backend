@@ -14,6 +14,7 @@ from k_backend.crud.account import (
     update_account_balances,
     update_accounts,
 )
+from k_backend.schemas.account import Account
 from k_backend.tests.factories import AccountFactory
 
 
@@ -106,7 +107,7 @@ def test_update_accounts_mismatch_length(session: Session):
 
 
 def test_update_account_balances(session: Session):
-    accounts = AccountFactory.create_batch(1)
+    accounts = AccountFactory.create_batch(3)
     account_amounts: dict[int, Decimal] = {}
     account_balances: dict[int, Decimal] = {}
     for account in accounts:
@@ -114,6 +115,7 @@ def test_update_account_balances(session: Session):
         account_balances[account.id] = account.balance
 
     updated_accounts = update_account_balances(session, account_amounts)
+    assert len(updated_accounts) == 3
 
     for account, updated_account in zip(accounts, updated_accounts, strict=True):
         balance = account_balances[account.id]
@@ -123,6 +125,38 @@ def test_update_account_balances(session: Session):
         assert updated_account.name == account.name
         assert updated_account.currency_code == account.currency_code
         assert updated_account.balance == balance + amount
+
+
+def test_update_account_balances_no_commit(session: Session, session_2: Session):
+    account = AccountFactory()
+    account_balance = account.balance
+    account_amounts: dict[int, Decimal] = {
+        account.id: Decimal(random.randint(-100, 100)),
+    }
+
+    updated_account = update_account_balances(session, account_amounts, commit=False)[0]
+    assert updated_account.id == account.id
+    assert updated_account.name == account.name
+    assert updated_account.currency_code == account.currency_code
+    assert updated_account.balance == account_balance + account_amounts[account.id]
+
+    # The account balance should not be updated from other sessions (yet)
+    session_2_account = session_2.get(Account, account.id)
+    assert session_2_account.id == account.id
+    assert session_2_account.name == account.name
+    assert session_2_account.currency_code == account.currency_code
+    assert session_2_account.balance == account_balance
+
+    # Commit the change from main session
+    session.commit()
+    session_2.reset()
+
+    # The account balance should now be updated from other sessions
+    session_2_account = session_2.get(Account, account.id)
+    assert session_2_account.id == account.id
+    assert session_2_account.name == account.name
+    assert session_2_account.currency_code == account.currency_code
+    assert session_2_account.balance == account_balance + account_amounts[account.id]
 
 
 def test__verify_account_ids(session: Session):
