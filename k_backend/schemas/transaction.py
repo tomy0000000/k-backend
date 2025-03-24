@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class TransactionBase(SQLModel):
-    account_id: int = Field(primary_key=True, foreign_key="account.id")
+    account_id: int = Field(foreign_key="account.id")
     payment_id: int | None = None
     amount: Decimal
     timestamp: datetime = Field(default=datetime.now)
@@ -27,7 +27,8 @@ class TransactionBase(SQLModel):
 
 class Transaction(TransactionBase, table=True):
     __tablename__ = "transaction"
-    payment_id: int = Field(primary_key=True, foreign_key="payment.id")
+    id: int | None = Field(primary_key=True, default=None)
+    payment_id: int = Field(foreign_key="payment.id")
     timestamp: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False)
     )
@@ -42,6 +43,7 @@ class TransactionCreate(TransactionBase):
 
 
 class TransactionRead(TransactionBase):
+    id: int
     payment_id: int
     timestamp: datetime
     timezone: TimeZoneName

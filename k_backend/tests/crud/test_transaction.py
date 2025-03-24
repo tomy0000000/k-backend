@@ -9,6 +9,7 @@ def test_create_transactions_1_txn(session: Session):
     txn = TransactionFactory.build()
     db_txn = create_transactions(session, [txn])[0]
 
+    assert db_txn.id is not None
     assert db_txn.account_id == txn.account_id
     assert db_txn.amount == txn.amount
     assert db_txn.description == txn.description
@@ -26,6 +27,7 @@ def test_create_transactions_n_txn(session: Session):
 
     assert len(db_txns) == 10
     for db_txn, txn in zip(db_txns, txns, strict=False):
+        assert db_txn.id is not None
         assert db_txn.account_id == txn.account_id
         assert db_txn.amount == txn.amount
         assert db_txn.description == txn.description
@@ -42,6 +44,7 @@ def test_create_transactions_no_commit(session: Session, session_2: Session):
 
     # The txn should be created in the session
     session_txn = create_transactions(session, [txn], commit=False)[0]
+    assert session_txn.id is not None
     assert session_txn.account_id == txn.account_id
     assert session_txn.amount == txn.amount
     assert session_txn.description == txn.description
@@ -53,14 +56,15 @@ def test_create_transactions_no_commit(session: Session, session_2: Session):
     assert session_txn.timezone == txn.timezone
 
     # The txn should not be visible to other sessions (yet)
-    session_2_txn = session_2.get(Transaction, (txn.account_id, txn.payment_id))
+    session_2_txn = session_2.get(Transaction, session_txn.id)
     assert session_2_txn is None
 
     # Commit the txn from main session
     session.commit()
 
     # The txn should now be visible to other sessions
-    session_2_txn = session_2.get(Transaction, (txn.account_id, txn.payment_id))
+    session_2_txn = session_2.get(Transaction, session_txn.id)
+    assert session_2_txn.id is not None
     assert session_2_txn is not None
     assert session_2_txn.account_id == txn.account_id
     assert session_2_txn.amount == txn.amount
