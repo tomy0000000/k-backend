@@ -218,17 +218,22 @@ def create(
         entry.payment_id = payment_id
     create_payment_entries(session, body.entries, commit=False)
 
-    # Modify account balance
+    # Store Transactions
     for transaction in body.transactions:
         transaction.payment_id = payment_id
-    update_balances_with_transactions(session, body.transactions, commit=False)
-
-    # Store Transactions
     create_transactions(session, body.transactions, commit=False)
 
+    # Modify account balance
+    update_balances_with_transactions(session, body.transactions, commit=False)
+
+    # Read the new payment
     new_payment = read_payment(session, payment_id)
     if new_payment is None:
         raise HTTPException(status_code=500, detail="Failed to create payment")
+
+    # Commit all changes
+    session.commit()
+
     return new_payment
 
 
