@@ -224,7 +224,7 @@ def create(
     update_balances_with_transactions(session, body.transactions)
 
     # Store Transactions
-    create_transactions(session, body.transactions)
+    create_transactions(session, body.transactions, commit=False)
 
     new_payment = read_payment(session, payment_id)
     if new_payment is None:

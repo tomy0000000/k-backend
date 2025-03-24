@@ -6,12 +6,17 @@ from ..schemas.transaction import Transaction, TransactionBase, TransactionCreat
 
 
 def create_transactions(
-    session: Session, txns: Sequence[TransactionCreate]
+    session: Session,
+    txns: Sequence[TransactionCreate],
+    commit: bool = True,
 ) -> Sequence[TransactionBase]:
     session.add_all(txns)
-    session.commit()
-    for txn in txns:
-        session.refresh(txn)
+    if commit:
+        session.commit()
+        for txn in txns:
+            session.refresh(txn)
+    else:
+        session.flush()
     return txns
 
 
