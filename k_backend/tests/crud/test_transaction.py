@@ -2,11 +2,12 @@ from sqlmodel import Session
 
 from k_backend.crud.transaction import create_transactions, get_transactions
 from k_backend.schemas.transaction import Transaction
-from k_backend.tests.factories import AccountFactory, TransactionFactory
+from k_backend.tests.factories import AccountFactory, PaymentFactory, TransactionFactory
 
 
 def test_create_transactions_1_txn(session: Session):
-    txn = TransactionFactory.build()
+    payment = PaymentFactory()
+    txn = TransactionFactory.build(payment=payment)
     db_txn = create_transactions(session, [txn])[0]
 
     assert db_txn.id is not None
@@ -22,7 +23,8 @@ def test_create_transactions_1_txn(session: Session):
 
 
 def test_create_transactions_n_txn(session: Session):
-    txns = TransactionFactory.build_batch(10)
+    payment = PaymentFactory()
+    txns = TransactionFactory.build_batch(10, payment=payment)
     db_txns = create_transactions(session, txns)
 
     assert len(db_txns) == 10
@@ -40,7 +42,8 @@ def test_create_transactions_n_txn(session: Session):
 
 
 def test_create_transactions_no_commit(session: Session, session_2: Session):
-    txn = TransactionFactory.build()
+    payment = PaymentFactory()
+    txn = TransactionFactory.build(payment=payment)
 
     # The txn should be created in the session
     session_txn = create_transactions(session, [txn], commit=False)[0]

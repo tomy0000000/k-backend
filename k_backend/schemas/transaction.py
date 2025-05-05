@@ -15,7 +15,10 @@ if TYPE_CHECKING:
 
 class TransactionBase(SQLModel):
     account_id: int = Field(foreign_key="account.id")
-    payment_id: int | None = None
+    # Logically, `payment_id` should have been a required field. However, it will be
+    # automatically populated when the payment is created, so it should not be
+    # explicitly assigened.
+    payment_id: int | None = Field(foreign_key="payment.id", default=None)
     amount: Decimal
     timestamp: datetime = Field(default=datetime.now)
     timezone: TimeZoneName | None = None

@@ -2,7 +2,7 @@ from collections.abc import Sequence
 
 from sqlmodel import Session
 
-from ..schemas.payment import PaymentEntryBase, PaymentEntryCreate
+from ..schemas.payment import PaymentEntry, PaymentEntryBase, PaymentEntryCreate
 
 
 def create_payment_entries(
@@ -10,11 +10,12 @@ def create_payment_entries(
     entries: list[PaymentEntryCreate],
     commit: bool = True,
 ) -> Sequence[PaymentEntryBase]:
-    session.add_all(entries)
+    db_entries = [PaymentEntry.model_validate(entry) for entry in entries]
+    session.add_all(db_entries)
     if commit:
         session.commit()
-        for entry in entries:
-            session.refresh(entry)
+        for db_entry in db_entries:
+            session.refresh(db_entry)
     else:
         session.flush()
-    return entries
+    return db_entries

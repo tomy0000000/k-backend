@@ -10,14 +10,15 @@ def create_transactions(
     txns: Sequence[TransactionCreate],
     commit: bool = True,
 ) -> Sequence[TransactionBase]:
-    session.add_all(txns)
+    db_txns = [Transaction.model_validate(txn) for txn in txns]
+    session.add_all(db_txns)
     if commit:
         session.commit()
-        for txn in txns:
-            session.refresh(txn)
+        for db_txn in db_txns:
+            session.refresh(db_txn)
     else:
         session.flush()
-    return txns
+    return db_txns
 
 
 def get_transactions(

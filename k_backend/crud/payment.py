@@ -14,13 +14,14 @@ from ..schemas.payment import (
 def create_payment(
     session: Session, payment: PaymentCreate, commit: bool = True
 ) -> PaymentBase:
-    session.add(payment)
+    db_payment = Payment.model_validate(payment)
+    session.add(db_payment)
     if commit:
         session.commit()
-        session.refresh(payment)
+        session.refresh(db_payment)
     else:
         session.flush()
-    return payment
+    return db_payment
 
 
 def read_payment(session: Session, payment_id: int) -> Payment | None:

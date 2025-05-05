@@ -12,15 +12,15 @@ from k_backend.tests.factories import (
 
 def test_create_payment(session: Session, session_2: Session):
     payment = PaymentFactory.build()
-    create_payment(session, payment)
-    db_payment = read_payment(session_2, payment.id)
+    db_payment = create_payment(session, payment)
+    db_read_payment = read_payment(session_2, db_payment.id)
 
-    assert db_payment.id is not None
-    assert db_payment.description == payment.description
-    assert db_payment.timestamp == payment.timestamp
-    assert db_payment.timezone == payment.timezone
-    assert db_payment.total == payment.total
-    assert db_payment.type == payment.type
+    assert db_read_payment.id is not None
+    assert db_read_payment.description == payment.description
+    assert db_read_payment.timestamp == payment.timestamp
+    assert db_read_payment.timezone == payment.timezone
+    assert db_read_payment.total == payment.total
+    assert db_read_payment.type == payment.type
 
 
 def test_create_payment_no_commit(session: Session, session_2: Session):
@@ -36,21 +36,21 @@ def test_create_payment_no_commit(session: Session, session_2: Session):
     assert session_payment.type == payment.type
 
     # The payment should not be visible to other sessions (yet)
-    session_2_payment = read_payment(session_2, payment.id)
+    session_2_payment = read_payment(session_2, session_payment.id)
     assert session_2_payment is None
 
     # Commit the payment from main session
     session.commit()
 
     # The payment should now be visible to other sessions
-    session_2_payment = read_payment(session_2, payment.id)
-    assert session_2_payment is not None
-    assert session_2_payment.id == payment.id
-    assert session_2_payment.description == payment.description
-    assert session_2_payment.timestamp == payment.timestamp
-    assert session_2_payment.timezone == payment.timezone
-    assert session_2_payment.total == payment.total
-    assert session_2_payment.type == payment.type
+    session_3_payment = read_payment(session_2, session_payment.id)
+    assert session_3_payment is not None
+    assert session_3_payment.id == session_payment.id
+    assert session_3_payment.description == session_payment.description
+    assert session_3_payment.timestamp == session_payment.timestamp
+    assert session_3_payment.timezone == session_payment.timezone
+    assert session_3_payment.total == session_payment.total
+    assert session_3_payment.type == session_payment.type
 
 
 def test_read_payment(session: Session):
