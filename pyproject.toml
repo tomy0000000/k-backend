@@ -1,6 +1,6 @@
 [project]
 name = "k-backend"
-version = "0.8.2"
+version = "0.9.0"
 description = "The backend API server of K"
 license = { text = "MIT" }
 readme = "README.md"
