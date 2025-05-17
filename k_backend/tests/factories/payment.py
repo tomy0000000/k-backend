@@ -26,17 +26,21 @@ class PaymentFactory(SQLAlchemyModelFactory):
         entries = PaymentEntryFactory.build_batch(entry_num)
         transactions = TransactionFactory.build_batch(transaction_num)
 
+        # Calculate totals
         total = factory.Faker("pydecimal", left_digits=5, right_digits=2)
-        if type in (PaymentType.Expense, PaymentType.Income):
-            # Calculate totals
-            entries_total = sum([entry.amount * entry.quantity for entry in entries])
-            transactions_total = sum(
-                [transaction.amount for transaction in transactions]
-            )
+        entries_total = sum([entry.amount * entry.quantity for entry in entries])
+        transactions_total = sum([transaction.amount for transaction in transactions])
 
+        if type is PaymentType.Expense:
             # Update last transaction amount to match the total
             # entries_total == -transactions_total
             transactions[-1].amount -= entries_total + transactions_total
+            total = entries_total
+
+        if type is PaymentType.Income:
+            # Update last transaction amount to match the total
+            # entries_total == transactions_total
+            transactions[-1].amount -= transactions_total - entries_total
             total = entries_total
 
         # Create payment
