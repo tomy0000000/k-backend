@@ -97,7 +97,14 @@ def update(*, session: Session = Depends(get_session), invoice: Invoice) -> Invo
 def create_or_update_details(
     *,
     session: Session = Depends(get_session),
-    number: str = Path(example="AB12345678"),
+    number: str = Path(
+        openapi_examples={
+            "normal": {
+                "summary": "A normal envoice number",
+                "value": "AB12345678",
+            },
+        },
+    ),
     invoice_details: list[InvoiceDetailWrite],
 ) -> InvoiceDetailWriteResponse:
     """

@@ -1,27 +1,24 @@
 from collections.abc import Sequence
 from datetime import date
-from decimal import Decimal
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.openapi.models import Example
-from pydantic_core import PydanticCustomError
 from sqlmodel import Session
 
-from k_backend.crud.payment import get_payments
-from k_backend.schemas.account import Account
+from k_backend.crud.payment import (
+    create_payment,
+    read_payment,
+    read_payments,
+)
+from k_backend.crud.payment_entry import create_payment_entries
+from k_backend.crud.transaction import create_transactions
+from k_backend.logics.account import update_balances_with_transactions
+from k_backend.logics.payment import validate_total
 
 from ..auth import get_client
 from ..core.db import get_session
-from ..schemas.payment import (
-    Payment,
-    PaymentBase,
-    PaymentCreateDetailed,
-    PaymentEntry,
-    PaymentRead,
-    PaymentReadDetailed,
-    PaymentType,
-    Transaction,
-)
+from ..schemas.api_models import PaymentCreateDetailed, PaymentReadDetailed
+from ..schemas.payment import Payment, PaymentBase, PaymentRead
 
 TAG_NAME = "Payment"
 tag = {
@@ -51,11 +48,15 @@ EXAMPLES = {
                     "transactions": [
                         {
                             "account_id": 2,
-                            "amount": 60,
+                            "amount": -60,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 3,
-                            "amount": 50,
+                            "amount": -50,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                     ],
                     "entries": [
@@ -95,10 +96,14 @@ EXAMPLES = {
                         {
                             "account_id": 2,
                             "amount": 50,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 3,
                             "amount": 60,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                     ],
                     "entries": [
@@ -139,14 +144,20 @@ EXAMPLES = {
                         {
                             "account_id": 1,
                             "amount": -14,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 2,
                             "amount": 60,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 3,
                             "amount": -60,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                     ],
                     "entries": [
@@ -175,14 +186,20 @@ EXAMPLES = {
                         {
                             "account_id": 1,
                             "amount": -150,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 2,
                             "amount": -3000,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                         {
-                            "account_id": 4,
+                            "account_id": 3,
                             "amount": 100,
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
                         },
                     ],
                     "entries": [
@@ -206,93 +223,48 @@ def create(
     session: Session = Depends(get_session),
     body: PaymentCreateDetailed = Body(openapi_examples=EXAMPLES["create"]),
 ) -> PaymentBase:
-    # Calculate total
-    if body.payment.type in (PaymentType.Expense, PaymentType.Income):
-        if body.payment.total is not None:
-            raise PydanticCustomError(
-                "total_should_not_be_provided",
-                "Total field is not allowed for expense or income",
-                {"loc": ("body", "payment", "total")},
-            )
-        entries_total = sum([entry.amount * entry.quantity for entry in body.entries])
-        transaction_total = Decimal(
-            sum([transaction.amount for transaction in body.transactions])
-        )
-        if entries_total != transaction_total:
-            raise PydanticCustomError(
-                "total_mismatch",
-                f"Entries total {entries_total} does not"
-                f" match transaction total {transaction_total}",
-                {"loc": ("body", "__root__")},
-            )
-        body.payment.total = transaction_total
-    elif body.payment.type is PaymentType.Transfer:
-        if body.payment.total is None:
-            raise PydanticCustomError(
-                "missing_total",
-                "Total field is required for transfer",
-                {"loc": ("body", "payment", "total")},
-            )
-    elif body.payment.type is PaymentType.Exchange:
-        if body.payment.total is None:
-            raise PydanticCustomError(
-                "missing_total",
-                "Total field is required for exchange",
-                {"loc": ("body", "payment", "total")},
-            )
-    else:
-        raise PydanticCustomError(
-            "unknown_payment_type",
-            f"Unknown type {body.payment.type}",
-            {"loc": ("body", "payment", "type")},
-        )
+    # Validate total
+    try:
+        validate_total(body)
+    except ValueError as err:
+        raise HTTPException(status_code=400, detail=err.args[0]) from err
 
     # Store payment
-    db_payment = Payment.model_validate(body.payment)
-    session.add(db_payment)
-    session.commit()
-    session.refresh(db_payment)
+    db_payment = create_payment(session, body.payment, commit=False)
     payment_id = PaymentRead.model_validate(db_payment).id
 
     # Store entries
     for entry in body.entries:
         entry.payment_id = payment_id
-        db_entry = PaymentEntry.model_validate(entry)
-        session.add(db_entry)
-    session.commit()
+    create_payment_entries(session, body.entries, commit=False)
 
-    for index, transaction in enumerate(body.transactions):
-        # Modify account balance
-        account = session.query(Account).get(transaction.account_id)
-        if not account:
-            raise PydanticCustomError(
-                "account_not_found",
-                f"Account with id: {transaction.account_id} does not exist",
-                {"loc": ("body", "transactions", index, "account_id")},
-            )
-        if body.payment.type is PaymentType.Expense:
-            account.balance -= transaction.amount
-        elif body.payment.type in (
-            PaymentType.Income,
-            PaymentType.Transfer,
-            PaymentType.Exchange,
-        ):
-            account.balance += transaction.amount
-        session.add(account)
-        # TODO: test what'll happen if two transactions with same account_id are added
-
-        # Store Transactions
+    # Store Transactions
+    for transaction in body.transactions:
         transaction.payment_id = payment_id
-        transaction.timestamp = body.payment.timestamp
-        transaction.timezone = body.payment.timezone
-        db_transaction = Transaction.model_validate(transaction)
-        session.add(db_transaction)
-    session.commit()
+    create_transactions(session, body.transactions, commit=False)
 
-    new_payment = session.get(Payment, payment_id)
+    # Modify account balance
+    update_balances_with_transactions(session, body.transactions, commit=False)
+
+    # Read the new payment
+    new_payment = read_payment(session, payment_id)
     if new_payment is None:
         raise HTTPException(status_code=500, detail="Failed to create payment")
+
+    # Commit all changes
+    session.commit()
+
     return new_payment
+
+
+@payment_router.get(
+    "/{payment_id}", name="Read Payment", response_model=PaymentReadDetailed
+)
+def read(*, session: Session = Depends(get_session), payment_id: int) -> PaymentBase:
+    payment = read_payment(session, payment_id)
+    if payment is None:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    return payment
 
 
 @payment_router.get("", name="Read Payments", response_model=list[PaymentReadDetailed])
@@ -302,7 +274,7 @@ def reads(
     payment_date: date | None = None,
     category_id: int | None = None,
 ) -> Sequence[PaymentBase]:
-    return get_payments(session, payment_date, category_id)
+    return read_payments(session, payment_date, category_id)
 
 
 @payment_router.patch("", name="Update Payment", response_model=PaymentRead)
@@ -310,14 +282,6 @@ def update(*, session: Session = Depends(get_session), payment: Payment) -> Paym
     session.merge(payment)
     session.commit()
     session.refresh(payment)
-    return payment
-
-
-@payment_router.get("/{id}", name="Read Payment", response_model=PaymentReadDetailed)
-def read(*, session: Session = Depends(get_session), id: int) -> PaymentBase:
-    payment = session.get(Payment, id)
-    if payment is None:
-        raise HTTPException(status_code=404, detail="Payment not found")
     return payment
 
 

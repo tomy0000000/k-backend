@@ -2,6 +2,9 @@
 
 <p align="left">
     <img src="https://img.shields.io/badge/python-3.12-blue.svg?logo=python" alt="Python 3.12" />
+    <a href="https://codecov.io/gh/tomy0000000/k-backend">
+        <img src="https://codecov.io/gh/tomy0000000/k-backend/graph/badge.svg?token=ng4W7JDOn8"/>
+    </a>
     <a href="https://hub.docker.com/repository/docker/tomy0000000/k-backend">
         <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/tomy0000000/k-backend">
     </a>

@@ -2,7 +2,23 @@ from collections.abc import Sequence
 
 from sqlmodel import Session, select
 
-from ..schemas.payment import Transaction
+from ..schemas.transaction import Transaction, TransactionBase, TransactionCreate
+
+
+def create_transactions(
+    session: Session,
+    txns: Sequence[TransactionCreate],
+    commit: bool = True,
+) -> Sequence[TransactionBase]:
+    db_txns = [Transaction.model_validate(txn) for txn in txns]
+    session.add_all(db_txns)
+    if commit:
+        session.commit()
+        for db_txn in db_txns:
+            session.refresh(db_txn)
+    else:
+        session.flush()
+    return db_txns
 
 
 def get_transactions(

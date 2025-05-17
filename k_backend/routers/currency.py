@@ -2,11 +2,13 @@ from collections.abc import Sequence
 
 from fastapi import APIRouter, Body, Depends
 from fastapi.openapi.models import Example
-from sqlmodel import Session, select
+from sqlmodel import Session
+
+from k_backend.crud.currency import create_currency, read_currencies
 
 from ..auth import get_client
 from ..core.db import get_session
-from ..schemas.account import Currency
+from ..schemas.currency import Currency
 
 TAG_NAME = "Currency"
 tag = {
@@ -57,13 +59,9 @@ def create(
     session: Session = Depends(get_session),
     currency: Currency = Body(openapi_examples=EXAMPLES["create"]),
 ) -> Currency:
-    session.add(currency)
-    session.commit()
-    session.refresh(currency)
-    return currency
+    return create_currency(session, currency)
 
 
 @currency_router.get("", name="Read Currencies", response_model=list[Currency])
 def reads(*, session: Session = Depends(get_session)) -> Sequence[Currency]:
-    currencies = session.exec(select(Currency)).all()
-    return currencies
+    return read_currencies(session)

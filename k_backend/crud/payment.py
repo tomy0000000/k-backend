@@ -1,13 +1,34 @@
 from collections.abc import Sequence
 from datetime import date
 
-from sqlalchemy import func
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
-from ..schemas.payment import Payment, PaymentEntry
+from ..schemas.payment import (
+    Payment,
+    PaymentBase,
+    PaymentCreate,
+    PaymentEntry,
+)
 
 
-def get_payments(
+def create_payment(
+    session: Session, payment: PaymentCreate, commit: bool = True
+) -> PaymentBase:
+    db_payment = Payment.model_validate(payment)
+    session.add(db_payment)
+    if commit:
+        session.commit()
+        session.refresh(db_payment)
+    else:
+        session.flush()
+    return db_payment
+
+
+def read_payment(session: Session, payment_id: int) -> Payment | None:
+    return session.get(Payment, payment_id)
+
+
+def read_payments(
     session: Session, payment_date: date | None = None, category_id: int | None = None
 ) -> Sequence[Payment]:
     scalar = select(Payment).distinct()

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
+from loguru import logger
 
 from .core.config import settings
 from .core.db import alembic_upgrade
@@ -11,6 +12,7 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     description="The All-in-One Financial Island",
     version="0.8.2",
+    debug=settings.ENVIRONMENT == "local",
     default_response_class=KustomJSONResponse,
     openapi_tags=tags,
     contact={"name": "Tomy Hsieh", "url": "https://github.com/tomy0000000"},
@@ -20,6 +22,7 @@ app = FastAPI(
     },
     generate_unique_id_function=custom_generate_unique_id,
 )
+logger.info(f"Applicaiton created in {settings.ENVIRONMENT} environment")
 
 app.add_middleware(
     CORSMiddleware,

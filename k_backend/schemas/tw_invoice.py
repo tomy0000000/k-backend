@@ -1,26 +1,12 @@
 from datetime import datetime
 
 from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel._compat import SQLModelConfig
 
 
 class InvoiceBase(SQLModel):
-    number: str | None
-    card_type: str | None
-    card_number: str | None
-    seller_name: str | None
-    status: str | None
-    donatable: bool | None
-    amount: str | None
-    period: str | None
-    donate_mark: int | None
-    seller_tax_id: str | None
-    seller_address: str | None
-    buyer_tax_id: str | None
-    currency: str | None
-    timestamp: datetime | None
-
-    class Config:
-        json_schema_extra = {
+    model_config = SQLModelConfig(
+        json_schema_extra={
             "example": {
                 "number": "AB12345678",
                 "card_type": "3J0002",
@@ -38,6 +24,22 @@ class InvoiceBase(SQLModel):
                 "timestamp": "2022-04-24T16:30:44",
             }
         }
+    )
+
+    number: str | None = None
+    card_type: str | None = None
+    card_number: str | None = None
+    seller_name: str | None = None
+    status: str | None = None
+    donatable: bool | None = None
+    amount: str | None = None
+    period: str | None = None
+    donate_mark: int | None = None
+    seller_tax_id: str | None = None
+    seller_address: str | None = None
+    buyer_tax_id: str | None = None
+    currency: str | None = None
+    timestamp: datetime | None = None
 
 
 class InvoiceBaseWithId(InvoiceBase):
@@ -93,15 +95,8 @@ class InvoiceWriteResponse(SQLModel):
 
 
 class InvoiceDetailBase(SQLModel):
-    invoice_number: str | None
-    row_number: int | None
-    description: str | None
-    quantity: str | None
-    unit_price: str | None
-    amount: str | None
-
-    class Config:
-        json_schema_extra = {
+    model_config = SQLModelConfig(
+        json_schema_extra={
             "example": {
                 "row_number": "1",
                 "description": "冰茶密斯朵V",
@@ -110,6 +105,14 @@ class InvoiceDetailBase(SQLModel):
                 "amount": "190",
             }
         }
+    )
+
+    invoice_number: str | None = None
+    row_number: int | None = None
+    description: str | None = None
+    quantity: str | None = None
+    unit_price: str | None = None
+    amount: str | None = None
 
 
 class InvoiceDetailBaseWithId(InvoiceDetailBase):

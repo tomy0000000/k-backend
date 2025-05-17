@@ -3,10 +3,9 @@ from typing import TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from ..util import PYDANTIC_JSON_ENCODERS
-
 if TYPE_CHECKING:
-    from .payment import Transaction
+    from .currency import Currency
+    from .transaction import Transaction
 
 
 class AccountBase(SQLModel):
@@ -23,20 +22,13 @@ class Account(AccountBase, table=True):
 
 
 class AccountCreate(AccountBase):
-    balance: Decimal | None
+    pass
 
 
 class AccountRead(AccountBase):
     id: int
     balance: Decimal
 
-    class Config:
-        json_encoders = PYDANTIC_JSON_ENCODERS
 
-
-class Currency(SQLModel, table=True):
-    __tablename__ = "currency"
-    code: str = Field(primary_key=True)
-    name: str
-    symbol: str
-    accounts: list[Account] = Relationship(back_populates="currency")
+class AccountUpdate(SQLModel):
+    name: str | None = None

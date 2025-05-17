@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 class CategoryBase(SQLModel):
     name: str
-    description: str | None
+    description: str | None = None
     disabled: bool = Field(default=False)
     parent_id: int | None = Field(foreign_key="category.id", default=None)
 
@@ -33,4 +33,4 @@ class CategoryRead(CategoryBase):
 
 
 class CategoryReadWithChildren(CategoryRead):
-    sub_categories: list[CategoryRead] | None
+    sub_categories: list[CategoryRead] | None = None
