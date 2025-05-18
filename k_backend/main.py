@@ -11,7 +11,7 @@ from .util import KustomJSONResponse, custom_generate_unique_id
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="The All-in-One Financial Island",
-    version="0.8.2",
+    version="0.9.0",
     debug=settings.ENVIRONMENT == "local",
     default_response_class=KustomJSONResponse,
     openapi_tags=tags,
