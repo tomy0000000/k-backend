@@ -6,14 +6,15 @@ from k_backend.tests.factories import AccountFactory, PaymentFactory, Transactio
 
 
 def test_create_transactions_1_txn(session: Session):
-    payment = PaymentFactory()
-    txn = TransactionFactory.build(payment=payment)
+    txn = PaymentFactory.build_details().transactions[0]
+    txn.payment_id = 1
     db_txn = create_transactions(session, [txn])[0]
 
     assert db_txn.id is not None
     assert db_txn.account_id == txn.account_id
     assert db_txn.amount == txn.amount
     assert db_txn.description == txn.description
+    assert db_txn.index == txn.index
     assert db_txn.payment_id == txn.payment_id
     assert db_txn.psp_id == txn.psp_id
     assert db_txn.psp_reconcile == txn.psp_reconcile
@@ -23,8 +24,9 @@ def test_create_transactions_1_txn(session: Session):
 
 
 def test_create_transactions_n_txn(session: Session):
-    payment = PaymentFactory()
-    txns = TransactionFactory.build_batch(10, payment=payment)
+    txns = PaymentFactory.build_details(transaction_num=10).transactions
+    for txn in txns:
+        txn.payment_id = 1
     db_txns = create_transactions(session, txns)
 
     assert len(db_txns) == 10
@@ -33,6 +35,7 @@ def test_create_transactions_n_txn(session: Session):
         assert db_txn.account_id == txn.account_id
         assert db_txn.amount == txn.amount
         assert db_txn.description == txn.description
+        assert db_txn.index == txn.index
         assert db_txn.payment_id == txn.payment_id
         assert db_txn.psp_id == txn.psp_id
         assert db_txn.psp_reconcile == txn.psp_reconcile
@@ -42,8 +45,8 @@ def test_create_transactions_n_txn(session: Session):
 
 
 def test_create_transactions_no_commit(session: Session, session_2: Session):
-    payment = PaymentFactory()
-    txn = TransactionFactory.build(payment=payment)
+    txn = PaymentFactory.build_details().transactions[0]
+    txn.payment_id = 1
 
     # The txn should be created in the session
     session_txn = create_transactions(session, [txn], commit=False)[0]
@@ -51,6 +54,7 @@ def test_create_transactions_no_commit(session: Session, session_2: Session):
     assert session_txn.account_id == txn.account_id
     assert session_txn.amount == txn.amount
     assert session_txn.description == txn.description
+    assert session_txn.index == txn.index
     assert session_txn.payment_id == txn.payment_id
     assert session_txn.psp_id == txn.psp_id
     assert session_txn.psp_reconcile == txn.psp_reconcile
@@ -72,6 +76,7 @@ def test_create_transactions_no_commit(session: Session, session_2: Session):
     assert session_2_txn.account_id == txn.account_id
     assert session_2_txn.amount == txn.amount
     assert session_2_txn.description == txn.description
+    assert session_2_txn.index == txn.index
     assert session_2_txn.payment_id == txn.payment_id
     assert session_2_txn.psp_id == txn.psp_id
     assert session_2_txn.psp_reconcile == txn.psp_reconcile

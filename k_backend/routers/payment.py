@@ -234,13 +234,15 @@ def create(
     payment_id = PaymentRead.model_validate(db_payment).id
 
     # Store entries
-    for entry in body.entries:
+    for entry_index, entry in enumerate(body.entries):
         entry.payment_id = payment_id
+        entry.index = entry_index
     create_payment_entries(session, body.entries, commit=False)
 
     # Store Transactions
-    for transaction in body.transactions:
+    for transaction_index, transaction in enumerate(body.transactions):
         transaction.payment_id = payment_id
+        entry.index = transaction_index
     create_transactions(session, body.transactions, commit=False)
 
     # Modify account balance

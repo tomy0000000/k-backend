@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 import sqlmodel
 from pydantic_extra_types.timezone_name import TimeZoneName
-from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
+from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, UniqueConstraint
 
 from ._custom_types import SATimezone
 
@@ -72,10 +72,16 @@ class PaymentEntryBase(SQLModel):
     amount: Decimal
     quantity: int
     description: str | None = None
+    index: int
 
 
 class PaymentEntry(PaymentEntryBase, table=True):
     __tablename__ = "payment_entry"
+    __table_args__ = (
+        UniqueConstraint(
+            "payment_id", "index", name="payment_entry_payment_id_index_key"
+        ),
+    )
     id: int | None = Field(primary_key=True, default=None)
     payment_id: int = Field(foreign_key="payment.id")
     payment: Payment = Relationship(back_populates="entries")

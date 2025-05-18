@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
 from pydantic_extra_types.timezone_name import TimeZoneName
-from sqlmodel import Column, DateTime, Field, Relationship, SQLModel
+from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, UniqueConstraint
 
 from ._custom_types import SATimezone
 
@@ -24,12 +24,18 @@ class TransactionBase(SQLModel):
     timezone: TimeZoneName | None = None
     description: str | None = None
     reconcile: bool = False
+    index: int
     psp_id: int | None = Field(foreign_key="payment_service_providers.id", default=None)
     psp_reconcile: bool | None = None
 
 
 class Transaction(TransactionBase, table=True):
     __tablename__ = "transaction"
+    __table_args__ = (
+        UniqueConstraint(
+            "payment_id", "index", name="transaction_payment_id_index_key"
+        ),
+    )
     id: int | None = Field(primary_key=True, default=None)
     payment_id: int = Field(foreign_key="payment.id")
     timestamp: datetime = Field(

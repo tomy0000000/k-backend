@@ -18,7 +18,7 @@ class PaymentFactory(SQLAlchemyModelFactory):
     type = factory.Faker("random_element", elements=list(PaymentType))
 
     @classmethod
-    def build_details(cls, type=PaymentType, entry_num=1, transaction_num=1):
+    def build_details(cls, type=PaymentType.Expense, entry_num=1, transaction_num=1):
         from .payment_entry import PaymentEntryFactory
         from .transaction import TransactionFactory
 
