@@ -1,14 +1,23 @@
 from sqlmodel import Session
 
 from k_backend.crud.payment_entry import create_payment_entries
-from k_backend.schemas.payment import PaymentEntry
+from k_backend.schemas.payment import PaymentEntry, PaymentEntryBase
 from k_backend.tests.factories import PaymentFactory
 
 
 def test_create_payment_entries(session: Session):
-    payment_entries = PaymentFactory.build_details(entry_num=3).entries
-    for entry in payment_entries:
-        entry.payment_id = 1
+    entry_creates = PaymentFactory.build_details(entry_num=3).entries
+    payment_entries = []
+    for entry_index, entry in enumerate(entry_creates):
+        payment_entries.append(
+            PaymentEntryBase.model_validate(
+                entry,
+                update={
+                    "payment_id": 1,
+                    "index": entry_index,
+                },
+            )
+        )
     db_entries = create_payment_entries(session, payment_entries)
 
     assert len(db_entries) == 3
@@ -24,22 +33,28 @@ def test_create_payment_entries(session: Session):
 
 
 def test_create_payment_entries_no_commit(session: Session, session_2: Session):
-    entry = PaymentFactory.build_details().entries[0]
-    entry.payment_id = 1
+    entry_create = PaymentFactory.build_details().entries[0]
+    payment_entry = PaymentEntryBase.model_validate(
+        entry_create,
+        update={
+            "payment_id": 1,
+            "index": 0,
+        },
+    )
 
     # The entry should be created in the session
     session_entry = create_payment_entries(
         session,
-        [entry],
+        [payment_entry],
         commit=False,
     )[0]
     assert session_entry.id is not None  # Auto int should be set
-    assert session_entry.amount == entry.amount
-    assert session_entry.category_id == entry.category_id
-    assert session_entry.description == entry.description
-    assert session_entry.index == entry.index
-    assert session_entry.payment_id == entry.payment_id
-    assert session_entry.quantity == entry.quantity
+    assert session_entry.amount == payment_entry.amount
+    assert session_entry.category_id == payment_entry.category_id
+    assert session_entry.description == payment_entry.description
+    assert session_entry.index == payment_entry.index
+    assert session_entry.payment_id == payment_entry.payment_id
+    assert session_entry.quantity == payment_entry.quantity
 
     # The entry should not be visible to other sessions (yet)
     session_2_entry = session_2.get(PaymentEntry, session_entry.id)

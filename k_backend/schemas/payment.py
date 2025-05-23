@@ -67,7 +67,7 @@ class PaymentRead(PaymentBase):
 
 
 class PaymentEntryBase(SQLModel):
-    payment_id: int | None = Field(foreign_key="payment.id", default=None)
+    payment_id: int = Field(foreign_key="payment.id")
     category_id: int = Field(foreign_key="category.id")
     amount: Decimal
     quantity: int
@@ -83,13 +83,15 @@ class PaymentEntry(PaymentEntryBase, table=True):
         ),
     )
     id: int | None = Field(primary_key=True, default=None)
-    payment_id: int = Field(foreign_key="payment.id")
     payment: Payment = Relationship(back_populates="entries")
     category: "Category" = Relationship(back_populates="entries")
 
 
-class PaymentEntryCreate(PaymentEntryBase):
-    pass
+class PaymentEntryCreate(SQLModel):
+    category_id: int
+    amount: Decimal
+    quantity: int
+    description: str | None = None
 
 
 class PaymentEntryRead(PaymentEntryBase):

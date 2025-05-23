@@ -15,10 +15,7 @@ if TYPE_CHECKING:
 
 class TransactionBase(SQLModel):
     account_id: int = Field(foreign_key="account.id")
-    # Logically, `payment_id` should have been a required field. However, it will be
-    # automatically populated when the payment is created, so it should not be
-    # explicitly assigened.
-    payment_id: int | None = Field(foreign_key="payment.id", default=None)
+    payment_id: int = Field(foreign_key="payment.id")
     amount: Decimal
     timestamp: datetime = Field(default=datetime.now)
     timezone: TimeZoneName
@@ -37,7 +34,6 @@ class Transaction(TransactionBase, table=True):
         ),
     )
     id: int | None = Field(primary_key=True, default=None)
-    payment_id: int = Field(foreign_key="payment.id")
     timestamp: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False)
     )
@@ -47,8 +43,15 @@ class Transaction(TransactionBase, table=True):
     psp: Optional["PSP"] = Relationship(back_populates="transactions")
 
 
-class TransactionCreate(TransactionBase):
-    pass
+class TransactionCreate(SQLModel):
+    account_id: int
+    amount: Decimal
+    timestamp: datetime
+    timezone: TimeZoneName
+    description: str | None = None
+    reconcile: bool = False
+    psp_id: int | None = None
+    psp_reconcile: bool = False
 
 
 class TransactionRead(TransactionBase):

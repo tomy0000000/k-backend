@@ -1,13 +1,19 @@
 from sqlmodel import Session
 
 from k_backend.crud.transaction import create_transactions, get_transactions
-from k_backend.schemas.transaction import Transaction
+from k_backend.schemas.transaction import Transaction, TransactionBase
 from k_backend.tests.factories import AccountFactory, PaymentFactory, TransactionFactory
 
 
 def test_create_transactions_1_txn(session: Session):
-    txn = PaymentFactory.build_details().transactions[0]
-    txn.payment_id = 1
+    txn_create = PaymentFactory.build_details().transactions[0]
+    txn = TransactionBase.model_validate(
+        txn_create,
+        update={
+            "payment_id": 1,
+            "index": 0,
+        },
+    )
     db_txn = create_transactions(session, [txn])[0]
 
     assert db_txn.id is not None
@@ -24,9 +30,18 @@ def test_create_transactions_1_txn(session: Session):
 
 
 def test_create_transactions_n_txn(session: Session):
-    txns = PaymentFactory.build_details(transaction_num=10).transactions
-    for txn in txns:
-        txn.payment_id = 1
+    txn_creates = PaymentFactory.build_details(transaction_num=10).transactions
+    txns = []
+    for txn_index, txn_create in enumerate(txn_creates):
+        txns.append(
+            TransactionBase.model_validate(
+                txn_create,
+                update={
+                    "payment_id": 1,
+                    "index": txn_index,
+                },
+            )
+        )
     db_txns = create_transactions(session, txns)
 
     assert len(db_txns) == 10
@@ -45,8 +60,14 @@ def test_create_transactions_n_txn(session: Session):
 
 
 def test_create_transactions_no_commit(session: Session, session_2: Session):
-    txn = PaymentFactory.build_details().transactions[0]
-    txn.payment_id = 1
+    txn_create = PaymentFactory.build_details().transactions[0]
+    txn = TransactionBase.model_validate(
+        txn_create,
+        update={
+            "payment_id": 1,
+            "index": 0,
+        },
+    )
 
     # The txn should be created in the session
     session_txn = create_transactions(session, [txn], commit=False)[0]
