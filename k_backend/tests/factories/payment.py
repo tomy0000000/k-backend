@@ -19,8 +19,8 @@ class PaymentFactory(SQLAlchemyModelFactory):
 
     @classmethod
     def build_details(cls, type=PaymentType.Expense, entry_num=1, transaction_num=1):
-        from .payment_entry import PaymentEntryFactory
-        from .transaction import TransactionFactory
+        from k_backend.tests.factories.payment_entry import PaymentEntryFactory
+        from k_backend.tests.factories.transaction import TransactionFactory
 
         # Create entries and transactions
         entries = PaymentEntryFactory.build_batch(entry_num)

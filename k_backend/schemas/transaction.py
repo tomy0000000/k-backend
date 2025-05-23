@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Optional
 from pydantic_extra_types.timezone_name import TimeZoneName
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, UniqueConstraint
 
-from ._custom_types import SATimezone
+from k_backend.schemas._custom_types import SATimezone
 
 if TYPE_CHECKING:
-    from .account import Account
-    from .payment import Payment
-    from .psp import PSP
+    from k_backend.schemas.account import Account
+    from k_backend.schemas.payment import Payment
+    from k_backend.schemas.psp import PSP
 
 
 class TransactionBase(SQLModel):

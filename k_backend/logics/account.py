@@ -2,8 +2,8 @@ from decimal import Decimal
 
 from sqlmodel import Session
 
-from ..crud.account import update_account_balances
-from ..schemas.transaction import TransactionCreate
+from k_backend.crud.account import update_account_balances
+from k_backend.schemas.transaction import TransactionCreate
 
 
 def update_balances_with_transactions(

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from .account import Account
+    from k_backend.schemas.account import Account
 
 
 class Currency(SQLModel, table=True):

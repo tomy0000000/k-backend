@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from .currency import Currency
-    from .transaction import Transaction
+    from k_backend.schemas.currency import Currency
+    from k_backend.schemas.transaction import Transaction
 
 
 class AccountBase(SQLModel):

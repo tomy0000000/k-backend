@@ -2,7 +2,7 @@ from collections.abc import Sequence
 
 from sqlmodel import Session, select
 
-from ..schemas.transaction import Transaction, TransactionBase
+from k_backend.schemas.transaction import Transaction, TransactionBase
 
 
 def create_transactions(

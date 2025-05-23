@@ -1,7 +1,7 @@
 from decimal import Decimal
 
-from ..schemas.api_models import PaymentCreateDetailed
-from ..schemas.payment import PaymentType
+from k_backend.schemas.api_models import PaymentCreateDetailed
+from k_backend.schemas.payment import PaymentType
 
 
 def validate_total(details: PaymentCreateDetailed) -> None:

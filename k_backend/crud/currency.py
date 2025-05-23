@@ -2,7 +2,7 @@ from collections.abc import Sequence
 
 from sqlmodel import Session, select
 
-from ..schemas.currency import Currency
+from k_backend.schemas.currency import Currency
 
 
 def create_currency(session: Session, currency: Currency) -> Currency:

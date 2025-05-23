@@ -7,11 +7,11 @@ import sqlmodel
 from pydantic_extra_types.timezone_name import TimeZoneName
 from sqlmodel import Column, DateTime, Field, Relationship, SQLModel, UniqueConstraint
 
-from ._custom_types import SATimezone
+from k_backend.schemas._custom_types import SATimezone
 
 if TYPE_CHECKING:
-    from .category import Category
-    from .transaction import Transaction
+    from k_backend.schemas.category import Category
+    from k_backend.schemas.transaction import Transaction
 
 #
 # Payment Category

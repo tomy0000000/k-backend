@@ -5,6 +5,8 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.openapi.models import Example
 from sqlmodel import Session
 
+from k_backend.auth import get_client
+from k_backend.core.db import get_session
 from k_backend.crud.payment import (
     create_payment,
     read_payment,
@@ -14,12 +16,14 @@ from k_backend.crud.payment_entry import create_payment_entries
 from k_backend.crud.transaction import create_transactions
 from k_backend.logics.account import update_balances_with_transactions
 from k_backend.logics.payment import validate_total
-
-from ..auth import get_client
-from ..core.db import get_session
-from ..schemas.api_models import PaymentCreateDetailed, PaymentReadDetailed
-from ..schemas.payment import Payment, PaymentBase, PaymentEntryBase, PaymentRead
-from ..schemas.transaction import TransactionBase
+from k_backend.schemas.api_models import PaymentCreateDetailed, PaymentReadDetailed
+from k_backend.schemas.payment import (
+    Payment,
+    PaymentBase,
+    PaymentEntryBase,
+    PaymentRead,
+)
+from k_backend.schemas.transaction import TransactionBase
 
 TAG_NAME = "Payment"
 tag = {

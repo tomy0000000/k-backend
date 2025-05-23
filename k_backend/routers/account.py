@@ -5,16 +5,20 @@ from pydantic_core import PydanticCustomError
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
+from k_backend.auth import get_client
+from k_backend.core.db import get_session
 from k_backend.crud.account import (
     create_account,
     read_account,
     read_accounts,
     update_accounts,
 )
-
-from ..auth import get_client
-from ..core.db import get_session
-from ..schemas.account import AccountBase, AccountCreate, AccountRead, AccountUpdate
+from k_backend.schemas.account import (
+    AccountBase,
+    AccountCreate,
+    AccountRead,
+    AccountUpdate,
+)
 
 TAG_NAME = "Account"
 tag = {

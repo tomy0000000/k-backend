@@ -1,6 +1,15 @@
 from typing import Any
 
-from . import account, auth, category, currency, payment, psp, transaction, tw_invoice
+from k_backend.routers import (
+    account,
+    auth,
+    category,
+    currency,
+    payment,
+    psp,
+    transaction,
+    tw_invoice,
+)
 
 routers = [
     auth.auth_router,
