@@ -21,12 +21,12 @@ class TransactionBase(SQLModel):
     payment_id: int | None = Field(foreign_key="payment.id", default=None)
     amount: Decimal
     timestamp: datetime = Field(default=datetime.now)
-    timezone: TimeZoneName | None = None
+    timezone: TimeZoneName
     description: str | None = None
     reconcile: bool = False
     index: int
     psp_id: int | None = Field(foreign_key="payment_service_providers.id", default=None)
-    psp_reconcile: bool | None = None
+    psp_reconcile: bool = False
 
 
 class Transaction(TransactionBase, table=True):
