@@ -32,11 +32,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_event_handler("startup", alembic_upgrade)
+# Auto migrate the database on startup
+if not app.debug:
+    app.add_event_handler("startup", alembic_upgrade)
+
+# Add all routers to the application
 for router in routers:
     app.include_router(router)
 
 
+# Redirect root path to Swagger UI
 @app.get("/", include_in_schema=False, tags=["root"])
 async def redirect_to_swagger() -> RedirectResponse:
     return RedirectResponse("docs")
