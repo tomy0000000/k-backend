@@ -69,19 +69,57 @@ EXAMPLES = {
                             "category_id": 1,
                             "amount": "20",
                             "quantity": 2,
+                            "currency_code": "TWD",
                             "description": "First entry",
                         },
                         {
                             "category_id": 2,
                             "amount": "30",
                             "quantity": 2,
+                            "currency_code": "TWD",
                             "description": "Second entry",
                         },
                         {
                             "category_id": 3,
                             "amount": "10",
                             "quantity": 1,
+                            "currency_code": "TWD",
                             "description": "Third entry",
+                        },
+                    ],
+                },
+            }
+        ),
+        "Multi-currency Expense": Example(
+            {
+                "summary": "Multi-currency Expense",
+                "value": {
+                    "payment": {
+                        "type": "Expense",
+                        "timestamp": "2022-09-08T08:07:08.000",
+                        "timezone": "Asia/Taipei",
+                        "description": "Some payment description",
+                    },
+                    "transactions": [
+                        {
+                            "account_id": 2,
+                            "amount": "-60",
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
+                        }
+                    ],
+                    "entries": [
+                        {
+                            "category_id": 1,
+                            "amount": "100",
+                            "quantity": 2,
+                            "currency_code": "USD",
+                        },
+                        {
+                            "category_id": 1,
+                            "amount": "20",
+                            "quantity": 1,
+                            "currency_code": "TWD",
                         },
                     ],
                 },
@@ -116,18 +154,21 @@ EXAMPLES = {
                             "category_id": 1,
                             "amount": "20",
                             "quantity": 2,
+                            "currency_code": "TWD",
                             "description": "First entry",
                         },
                         {
                             "category_id": 2,
                             "amount": "30",
                             "quantity": 2,
+                            "currency_code": "TWD",
                             "description": "Second entry",
                         },
                         {
                             "category_id": 3,
                             "amount": "10",
                             "quantity": 1,
+                            "currency_code": "TWD",
                             "description": "Third entry",
                         },
                     ],
@@ -142,7 +183,6 @@ EXAMPLES = {
                         "type": "Transfer",
                         "timestamp": "2022-09-08T08:07:08.000",
                         "timezone": "Asia/Taipei",
-                        "total": 60,
                         "description": "Some payment description",
                     },
                     "transactions": [
@@ -170,6 +210,7 @@ EXAMPLES = {
                             "category_id": 4,
                             "amount": "14",
                             "quantity": 1,
+                            "currency_code": "TWD",
                             "description": "Fee",
                         },
                     ],
@@ -184,7 +225,6 @@ EXAMPLES = {
                         "type": "Exchange",
                         "timestamp": "2022-09-08T08:07:08.000",
                         "timezone": "Asia/Taipei",
-                        "total": 100,
                         "description": "Some payment description",
                     },
                     "transactions": [
@@ -212,6 +252,7 @@ EXAMPLES = {
                             "category_id": 4,
                             "amount": "150",
                             "quantity": 1,
+                            "currency_code": "TWD",
                             "description": "Fee",
                         },
                     ],
