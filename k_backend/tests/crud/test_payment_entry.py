@@ -25,6 +25,7 @@ def test_create_payment_entries(session: Session):
     for i, db_entry in enumerate(db_entries):
         assert db_entry.amount == payment_entries[i].amount
         assert db_entry.category_id == payment_entries[i].category_id
+        assert db_entry.currency_code == payment_entries[i].currency_code
         assert db_entry.description == payment_entries[i].description
         assert db_entry.index == payment_entries[i].index
         assert db_entry.id is not None
@@ -51,6 +52,7 @@ def test_create_payment_entries_no_commit(session: Session, session_2: Session):
     assert session_entry.id is not None  # Auto int should be set
     assert session_entry.amount == payment_entry.amount
     assert session_entry.category_id == payment_entry.category_id
+    assert session_entry.currency_code == payment_entry.currency_code
     assert session_entry.description == payment_entry.description
     assert session_entry.index == payment_entry.index
     assert session_entry.payment_id == payment_entry.payment_id
@@ -69,6 +71,7 @@ def test_create_payment_entries_no_commit(session: Session, session_2: Session):
     assert session_2_entry.id == session_entry.id
     assert session_2_entry.amount == session_entry.amount
     assert session_2_entry.category_id == session_entry.category_id
+    assert session_2_entry.currency_code == session_entry.currency_code
     assert session_2_entry.description == session_entry.description
     assert session_2_entry.index == session_entry.index
     assert session_2_entry.payment_id == session_entry.payment_id

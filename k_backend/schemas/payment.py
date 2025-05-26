@@ -11,6 +11,7 @@ from k_backend.schemas._custom_types import SATimezone
 
 if TYPE_CHECKING:
     from k_backend.schemas.category import Category
+    from k_backend.schemas.currency import Currency
     from k_backend.schemas.transaction import Transaction
 
 #
@@ -47,18 +48,16 @@ class Payment(PaymentBase, table=True):
     id: int | None = Field(primary_key=True, default=None)
     # Auto calculated for Expense or Income
     # Manually logged for Transfer or Exchange
-    total: Decimal
     transactions: list["Transaction"] = Relationship(back_populates="payment")
     entries: list["PaymentEntry"] = Relationship(back_populates="payment")
 
 
 class PaymentCreate(PaymentBase):
-    total: Decimal | None = None
+    pass
 
 
 class PaymentRead(PaymentBase):
     id: int
-    total: Decimal
 
 
 #
@@ -71,6 +70,7 @@ class PaymentEntryBase(SQLModel):
     category_id: int = Field(foreign_key="category.id")
     amount: Decimal
     quantity: int
+    currency_code: str = Field(foreign_key="currency.code")
     description: str | None = None
     index: int
 
@@ -85,12 +85,14 @@ class PaymentEntry(PaymentEntryBase, table=True):
     id: int | None = Field(primary_key=True, default=None)
     payment: Payment = Relationship(back_populates="entries")
     category: "Category" = Relationship(back_populates="entries")
+    currency: "Currency" = Relationship(back_populates="entries")
 
 
 class PaymentEntryCreate(SQLModel):
     category_id: int
     amount: Decimal
     quantity: int
+    currency_code: str
     description: str | None = None
 
 

@@ -17,3 +17,5 @@ class PaymentEntryFactory(SQLAlchemyModelFactory):
     payment = factory.SubFactory("k_backend.tests.factories.payment.PaymentFactory")
     payment_id = factory.SelfAttribute("payment.id")
     quantity = factory.Faker("random_int", min=1, max=10)
+    currency = factory.SubFactory("k_backend.tests.factories.currency.CurrencyFactory")
+    currency_code = factory.SelfAttribute("currency.code")

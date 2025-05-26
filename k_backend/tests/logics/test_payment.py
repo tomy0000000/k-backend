@@ -5,35 +5,25 @@ from k_backend.schemas.payment import PaymentType
 from k_backend.tests.factories import PaymentFactory
 
 
-def test_validate_total_expense_no_total():
-    """Total is not set and entries total is used"""
-    details = PaymentFactory.build_details(
-        type=PaymentType.Expense, entry_num=3, transaction_num=5
-    )
-    details.payment.total = None
-    validate_total(details)
-
-
-def test_validate_total_expense_explicit_total():
-    """Total is explicitly set and matches the entries total"""
+def test_validate_total_expense():
+    """Expense: Entries total is matched with transactions total"""
     details = PaymentFactory.build_details(
         type=PaymentType.Expense, entry_num=3, transaction_num=5
     )
     validate_total(details)
 
 
-def test_validate_total_expense_explicit_total_mismatch():
-    """Contains a total that does not match the sum of entries"""
+def test_validate_total_expense_multi_currencies():
+    """Expense: Multiple currencies are used, validation should be skipped"""
     details = PaymentFactory.build_details(
         type=PaymentType.Expense, entry_num=3, transaction_num=5
     )
-    details.payment.total += 1
-    with pytest.raises(ValueError, match="payment (.*) not match"):
-        validate_total(details)
+    details.entries[-1].currency_code += "_INVALID"  # explicitly change currency
+    validate_total(details)
 
 
-def test_validate_total_expense_entries_transactions_mismatch():
-    """Entries and transactions totals do not match"""
+def test_validate_total_expense_mismatch():
+    """Expense: Entries and transactions totals do not match"""
     details = PaymentFactory.build_details(
         type=PaymentType.Expense, entry_num=3, transaction_num=5
     )
@@ -42,26 +32,25 @@ def test_validate_total_expense_entries_transactions_mismatch():
         validate_total(details)
 
 
-def test_validate_total_income_explicit_total():
-    """Total is explicitly set and matches the entries total"""
+def test_validate_total_income():
+    """Income: Entries total is matched with transactions total"""
     details = PaymentFactory.build_details(
         type=PaymentType.Income, entry_num=3, transaction_num=5
     )
     validate_total(details)
 
 
-def test_validate_total_income_explicit_total_mismatch():
-    """Contains a total that does not match the sum of entries"""
+def test_validate_total_income_multi_currencies():
+    """Income: Multiple currencies are used, validation should be skipped"""
     details = PaymentFactory.build_details(
         type=PaymentType.Income, entry_num=3, transaction_num=5
     )
-    details.payment.total += 1
-    with pytest.raises(ValueError, match="payment (.*) not match"):
-        validate_total(details)
+    details.entries[-1].currency_code += "_INVALID"  # explicitly change currency
+    validate_total(details)
 
 
-def test_validate_total_income_entries_transactions_mismatch():
-    """Entries and transactions totals do not match"""
+def test_validate_total_income_mismatch():
+    """Income: Entries and transactions totals do not match"""
     details = PaymentFactory.build_details(
         type=PaymentType.Income, entry_num=3, transaction_num=5
     )
@@ -70,19 +59,17 @@ def test_validate_total_income_entries_transactions_mismatch():
         validate_total(details)
 
 
-def test_validate_total_transfer_with_total():
-    """Total is not set and entries total is used"""
+def test_validate_total_transfer():
+    """Transfer: Validation should be skipped"""
     details = PaymentFactory.build_details(
         type=PaymentType.Transfer, entry_num=3, transaction_num=5
     )
     validate_total(details)
 
 
-def test_validate_total_transfer_without_total():
-    """Total is explicitly set and matches the entries total"""
+def test_validate_total_exchange():
+    """Exchange: Validation should be skipped"""
     details = PaymentFactory.build_details(
-        type=PaymentType.Transfer, entry_num=3, transaction_num=5
+        type=PaymentType.Exchange, entry_num=3, transaction_num=5
     )
-    details.payment.total = None
-    with pytest.raises(ValueError, match="must have a total"):
-        validate_total(details)
+    validate_total(details)
