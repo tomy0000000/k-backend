@@ -6,17 +6,24 @@ on:
       - "main"
       - "develop"
     paths:
-      - "k_backend/**"
+      - "backend/k_backend/**"
   pull_request:
     branches:
       - "develop"
     paths:
       - "k_backend/**"
 
+defaults:
+  run:
+    working-directory: "./backend"
+
 jobs:
   analyze:
     name: "📊 Analyze"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./backend"
     permissions:
       actions: read
       contents: read

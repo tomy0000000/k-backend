@@ -6,11 +6,15 @@ on:
       - "develop"
     paths:
       - ".github/**"
-      - "k_backend/**"
-      - "pyproject.toml"
-      - "poetry.lock"
+      - "backend/k_backend/**"
+      - "backend/pyproject.toml"
+      - "backend/poetry.lock"
   pull_request:
   workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: "./backend"
 
 jobs:
   test:
@@ -20,9 +24,13 @@ jobs:
       - name: "🛒 Checkout"
         uses: actions/checkout@v4
 
+      - name: "print PWD"
+        run: echo $PWD
+
       - name: "🐍 Set up Poetry"
         uses: tomy0000000/actions/python-poetry-install@main
         with:
+          working_directory: "./backend"
           python_version: "3.12"
 
       - name: "🧪 Testing"
@@ -45,6 +53,7 @@ jobs:
       - name: "🐍 Set up Poetry"
         uses: tomy0000000/actions/python-poetry-install@main
         with:
+          working_directory: "./backend"
           python_version: "3.12"
 
       - name: "🔍 Linting"

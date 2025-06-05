@@ -10,14 +10,14 @@ EXPOSE 8000
 RUN pip install --upgrade pip poetry
 
 # Copy dependencies
-COPY pyproject.toml poetry.lock /usr/src/k-backend/
+COPY backend/pyproject.toml backend/poetry.lock /usr/src/k-backend/
 
 # Install Dependencies
 RUN poetry config virtualenvs.create false && \
     poetry install --no-interaction --no-ansi
 
 # Copy Application
-COPY . /usr/src/k-backend
+COPY backend/ /usr/src/k-backend
 
 # Run Application
 ENTRYPOINT [ "uvicorn", "k_backend.main:app", "--host", "0.0.0.0", "--port", "8000" ]
