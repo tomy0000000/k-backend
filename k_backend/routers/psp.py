@@ -3,9 +3,9 @@ from collections.abc import Sequence
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
-from ..auth import get_client
-from ..core.db import get_session
-from ..schemas.psp import PSP, PSPBase, PSPCreate, PSPRead
+from k_backend.auth import get_client
+from k_backend.core.db import get_session
+from k_backend.schemas.psp import PSP, PSPBase, PSPCreate, PSPRead
 
 TAG_NAME = "Payment Service Provider"
 tag = {

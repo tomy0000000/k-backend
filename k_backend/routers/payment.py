@@ -5,6 +5,8 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.openapi.models import Example
 from sqlmodel import Session
 
+from k_backend.auth import get_client
+from k_backend.core.db import get_session
 from k_backend.crud.payment import (
     create_payment,
     read_payment,
@@ -14,11 +16,14 @@ from k_backend.crud.payment_entry import create_payment_entries
 from k_backend.crud.transaction import create_transactions
 from k_backend.logics.account import update_balances_with_transactions
 from k_backend.logics.payment import validate_total
-
-from ..auth import get_client
-from ..core.db import get_session
-from ..schemas.api_models import PaymentCreateDetailed, PaymentReadDetailed
-from ..schemas.payment import Payment, PaymentBase, PaymentRead
+from k_backend.schemas.api_models import PaymentCreateDetailed, PaymentReadDetailed
+from k_backend.schemas.payment import (
+    Payment,
+    PaymentBase,
+    PaymentEntryBase,
+    PaymentRead,
+)
+from k_backend.schemas.transaction import TransactionBase
 
 TAG_NAME = "Payment"
 tag = {
@@ -48,13 +53,13 @@ EXAMPLES = {
                     "transactions": [
                         {
                             "account_id": 2,
-                            "amount": -60,
+                            "amount": "-60",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 3,
-                            "amount": -50,
+                            "amount": "-50",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
@@ -62,21 +67,59 @@ EXAMPLES = {
                     "entries": [
                         {
                             "category_id": 1,
-                            "amount": 20,
+                            "amount": "20",
                             "quantity": 2,
+                            "currency_code": "TWD",
                             "description": "First entry",
                         },
                         {
                             "category_id": 2,
-                            "amount": 30,
+                            "amount": "30",
                             "quantity": 2,
+                            "currency_code": "TWD",
                             "description": "Second entry",
                         },
                         {
                             "category_id": 3,
-                            "amount": 10,
+                            "amount": "10",
                             "quantity": 1,
+                            "currency_code": "TWD",
                             "description": "Third entry",
+                        },
+                    ],
+                },
+            }
+        ),
+        "Multi-currency Expense": Example(
+            {
+                "summary": "Multi-currency Expense",
+                "value": {
+                    "payment": {
+                        "type": "Expense",
+                        "timestamp": "2022-09-08T08:07:08.000",
+                        "timezone": "Asia/Taipei",
+                        "description": "Some payment description",
+                    },
+                    "transactions": [
+                        {
+                            "account_id": 2,
+                            "amount": "-60",
+                            "timestamp": "2022-09-08T08:07:08.000",
+                            "timezone": "Asia/Taipei",
+                        }
+                    ],
+                    "entries": [
+                        {
+                            "category_id": 1,
+                            "amount": "100",
+                            "quantity": 2,
+                            "currency_code": "USD",
+                        },
+                        {
+                            "category_id": 1,
+                            "amount": "20",
+                            "quantity": 1,
+                            "currency_code": "TWD",
                         },
                     ],
                 },
@@ -95,13 +138,13 @@ EXAMPLES = {
                     "transactions": [
                         {
                             "account_id": 2,
-                            "amount": 50,
+                            "amount": "50",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 3,
-                            "amount": 60,
+                            "amount": "60",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
@@ -109,20 +152,23 @@ EXAMPLES = {
                     "entries": [
                         {
                             "category_id": 1,
-                            "amount": 20,
+                            "amount": "20",
                             "quantity": 2,
+                            "currency_code": "TWD",
                             "description": "First entry",
                         },
                         {
                             "category_id": 2,
-                            "amount": 30,
+                            "amount": "30",
                             "quantity": 2,
+                            "currency_code": "TWD",
                             "description": "Second entry",
                         },
                         {
                             "category_id": 3,
-                            "amount": 10,
+                            "amount": "10",
                             "quantity": 1,
+                            "currency_code": "TWD",
                             "description": "Third entry",
                         },
                     ],
@@ -137,25 +183,24 @@ EXAMPLES = {
                         "type": "Transfer",
                         "timestamp": "2022-09-08T08:07:08.000",
                         "timezone": "Asia/Taipei",
-                        "total": 60,
                         "description": "Some payment description",
                     },
                     "transactions": [
                         {
                             "account_id": 1,
-                            "amount": -14,
+                            "amount": "-14",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 2,
-                            "amount": 60,
+                            "amount": "60",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 3,
-                            "amount": -60,
+                            "amount": "-60",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
@@ -163,8 +208,9 @@ EXAMPLES = {
                     "entries": [
                         {
                             "category_id": 4,
-                            "amount": 14,
+                            "amount": "14",
                             "quantity": 1,
+                            "currency_code": "TWD",
                             "description": "Fee",
                         },
                     ],
@@ -179,25 +225,24 @@ EXAMPLES = {
                         "type": "Exchange",
                         "timestamp": "2022-09-08T08:07:08.000",
                         "timezone": "Asia/Taipei",
-                        "total": 100,
                         "description": "Some payment description",
                     },
                     "transactions": [
                         {
                             "account_id": 1,
-                            "amount": -150,
+                            "amount": "-150",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 2,
-                            "amount": -3000,
+                            "amount": "-3000",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
                         {
                             "account_id": 3,
-                            "amount": 100,
+                            "amount": "100",
                             "timestamp": "2022-09-08T08:07:08.000",
                             "timezone": "Asia/Taipei",
                         },
@@ -205,8 +250,9 @@ EXAMPLES = {
                     "entries": [
                         {
                             "category_id": 4,
-                            "amount": 150,
+                            "amount": "150",
                             "quantity": 1,
+                            "currency_code": "TWD",
                             "description": "Fee",
                         },
                     ],
@@ -234,14 +280,32 @@ def create(
     payment_id = PaymentRead.model_validate(db_payment).id
 
     # Store entries
-    for entry in body.entries:
-        entry.payment_id = payment_id
-    create_payment_entries(session, body.entries, commit=False)
+    entries = []
+    for entry_index, entry_create in enumerate(body.entries):
+        entries.append(
+            PaymentEntryBase.model_validate(
+                entry_create,
+                update={
+                    "payment_id": payment_id,
+                    "index": entry_index,
+                },
+            )
+        )
+    create_payment_entries(session, entries, commit=False)
 
     # Store Transactions
-    for transaction in body.transactions:
-        transaction.payment_id = payment_id
-    create_transactions(session, body.transactions, commit=False)
+    transactions = []
+    for transaction_index, transaction in enumerate(body.transactions):
+        transactions.append(
+            TransactionBase.model_validate(
+                transaction,
+                update={
+                    "payment_id": payment_id,
+                    "index": transaction_index,
+                },
+            )
+        )
+    create_transactions(session, transactions, commit=False)
 
     # Modify account balance
     update_balances_with_transactions(session, body.transactions, commit=False)

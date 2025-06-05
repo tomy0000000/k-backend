@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from ..auth import authenticate_client, create_access_token, get_client
-from ..schemas import clients
+from k_backend.auth import authenticate_client, create_access_token, get_client
+from k_backend.schemas import clients
 
 tag = {
     "name": "Authorization",

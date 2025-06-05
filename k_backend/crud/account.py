@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from sqlmodel import Integer, Session, cast, select
 
-from ..schemas.account import Account, AccountBase, AccountCreate, AccountUpdate
+from k_backend.schemas.account import Account, AccountBase, AccountCreate, AccountUpdate
 
 
 def create_account(session: Session, account: AccountCreate) -> AccountBase:

@@ -3,9 +3,9 @@ from collections.abc import Sequence
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from ..auth import get_client
-from ..core.db import get_session
-from ..schemas.category import (
+from k_backend.auth import get_client
+from k_backend.core.db import get_session
+from k_backend.schemas.category import (
     Category,
     CategoryBase,
     CategoryCreate,

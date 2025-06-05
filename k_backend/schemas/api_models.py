@@ -2,8 +2,13 @@
 
 from sqlmodel import SQLModel
 
-from .payment import PaymentCreate, PaymentEntryCreate, PaymentEntryRead, PaymentRead
-from .transaction import TransactionCreate, TransactionRead
+from k_backend.schemas.payment import (
+    PaymentCreate,
+    PaymentEntryCreate,
+    PaymentEntryRead,
+    PaymentRead,
+)
+from k_backend.schemas.transaction import TransactionCreate, TransactionRead
 
 
 class PaymentReadDetailed(PaymentRead):

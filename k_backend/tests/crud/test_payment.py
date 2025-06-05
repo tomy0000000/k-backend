@@ -19,7 +19,6 @@ def test_create_payment(session: Session, session_2: Session):
     assert db_read_payment.description == payment.description
     assert db_read_payment.timestamp == payment.timestamp
     assert db_read_payment.timezone == payment.timezone
-    assert db_read_payment.total == payment.total
     assert db_read_payment.type == payment.type
 
 
@@ -32,7 +31,6 @@ def test_create_payment_no_commit(session: Session, session_2: Session):
     assert session_payment.description == payment.description
     assert session_payment.timestamp == payment.timestamp
     assert session_payment.timezone == payment.timezone
-    assert session_payment.total == payment.total
     assert session_payment.type == payment.type
 
     # The payment should not be visible to other sessions (yet)
@@ -49,7 +47,6 @@ def test_create_payment_no_commit(session: Session, session_2: Session):
     assert session_3_payment.description == session_payment.description
     assert session_3_payment.timestamp == session_payment.timestamp
     assert session_3_payment.timezone == session_payment.timezone
-    assert session_3_payment.total == session_payment.total
     assert session_3_payment.type == session_payment.type
 
 

@@ -8,8 +8,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from loguru import logger
 
-from .core.config import settings
-from .schemas.clients import Client
+from k_backend.core.config import settings
+from k_backend.schemas.clients import Client
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60

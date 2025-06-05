@@ -2,12 +2,12 @@ from collections.abc import Sequence
 
 from sqlmodel import Session
 
-from ..schemas.payment import PaymentEntry, PaymentEntryBase, PaymentEntryCreate
+from k_backend.schemas.payment import PaymentEntry, PaymentEntryBase
 
 
 def create_payment_entries(
     session: Session,
-    entries: list[PaymentEntryCreate],
+    entries: list[PaymentEntryBase],
     commit: bool = True,
 ) -> Sequence[PaymentEntryBase]:
     db_entries = [PaymentEntry.model_validate(entry) for entry in entries]

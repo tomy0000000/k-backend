@@ -2,12 +2,12 @@ from collections.abc import Sequence
 
 from sqlmodel import Session, select
 
-from ..schemas.transaction import Transaction, TransactionBase, TransactionCreate
+from k_backend.schemas.transaction import Transaction, TransactionBase
 
 
 def create_transactions(
     session: Session,
-    txns: Sequence[TransactionCreate],
+    txns: Sequence[TransactionBase],
     commit: bool = True,
 ) -> Sequence[TransactionBase]:
     db_txns = [Transaction.model_validate(txn) for txn in txns]

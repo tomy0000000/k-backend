@@ -4,11 +4,10 @@ from fastapi import APIRouter, Body, Depends
 from fastapi.openapi.models import Example
 from sqlmodel import Session
 
+from k_backend.auth import get_client
+from k_backend.core.db import get_session
 from k_backend.crud.currency import create_currency, read_currencies
-
-from ..auth import get_client
-from ..core.db import get_session
-from ..schemas.currency import Currency
+from k_backend.schemas.currency import Currency
 
 TAG_NAME = "Currency"
 tag = {

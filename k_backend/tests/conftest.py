@@ -24,7 +24,7 @@ def db_uri() -> Generator[str, None, None]:
 # Reference: https://github.com/fastapi/sqlmodel/discussions/615
 @pytest.fixture(scope="function")
 def session(db_uri) -> Generator[Session, None, None]:
-    from . import factories  # noqa: F401
+    from k_backend.tests import factories  # noqa: F401
 
     engine = create_engine(
         db_uri,
@@ -46,7 +46,7 @@ def session(db_uri) -> Generator[Session, None, None]:
 
 @pytest.fixture(scope="function")
 def session_2(db_uri) -> Generator[Session, None, None]:
-    from . import factories  # noqa: F401
+    from k_backend.tests import factories  # noqa: F401
 
     engine = create_engine(
         db_uri,

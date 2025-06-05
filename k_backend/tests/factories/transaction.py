@@ -13,6 +13,7 @@ class TransactionFactory(SQLAlchemyModelFactory):
     account_id = factory.SelfAttribute("account.id")
     amount = factory.Faker("pydecimal", left_digits=5, right_digits=2)
     description = factory.Faker("sentence")
+    index = factory.Sequence(lambda n: n)
     payment = factory.SubFactory("k_backend.tests.factories.payment.PaymentFactory")
     payment_id = factory.SelfAttribute("payment.id")
     reconcile = factory.Faker("boolean")

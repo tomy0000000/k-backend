@@ -3,10 +3,10 @@ from collections.abc import Sequence
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-from ..auth import get_client
-from ..core.db import get_session
-from ..crud.transaction import get_transactions
-from ..schemas.transaction import TransactionBase, TransactionRead
+from k_backend.auth import get_client
+from k_backend.core.db import get_session
+from k_backend.crud.transaction import get_transactions
+from k_backend.schemas.transaction import TransactionBase, TransactionRead
 
 TAG_NAME = "Transaction"
 tag = {

@@ -3,7 +3,7 @@ from datetime import date
 
 from sqlmodel import Session, func, select
 
-from ..schemas.payment import (
+from k_backend.schemas.payment import (
     Payment,
     PaymentBase,
     PaymentCreate,
