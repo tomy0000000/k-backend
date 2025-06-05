@@ -33,13 +33,16 @@
       }
     },
     {
-      "label": "🧪 Run Tests",
+      "label": "🧪 Run Backend Tests",
       "type": "shell",
       "command": "poetry",
       "args": [
         "run",
-        "${workspaceFolder}/scripts/test.sh"
+        "scripts/test.sh"
       ],
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
       "problemMatcher": [],
       "group": {
         "kind": "test",
