@@ -24,9 +24,6 @@ jobs:
       - name: "🛒 Checkout"
         uses: actions/checkout@v4
 
-      - name: "print PWD"
-        run: echo $PWD
-
       - name: "🐍 Set up Poetry"
         uses: tomy0000000/actions/python-poetry-install@main
         with:
