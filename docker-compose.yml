@@ -14,7 +14,7 @@ services:
     container_name: "kayman-db"
     env_file:
       - "instance/.env"
-    image: "postgres:15"
+    image: "postgres:17"
     restart: "always"
     volumes:
       - "data:/var/lib/postgresql/data"
