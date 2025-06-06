@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - "./backend:/usr/src/k-backend"
+      - "./backend:/usr/src/kayman"
   db:
     ports:
       - "5432:5432"

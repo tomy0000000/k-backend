@@ -1,17 +1,17 @@
 services:
-  api:
-    container_name: "k-backend-api"
+  kayman:
+    container_name: "kayman-app"
     depends_on:
       - "db"
     env_file:
       - "instance/.env"
-    image: "tomy0000000/k-backend"
+    image: "tomy0000000/kayman"
     restart: "always"
     volumes:
-      - "./instance:/usr/src/k-backend/instance"
+      - "./instance:/usr/src/kayman/instance"
 
   db:
-    container_name: "k-backend-db"
+    container_name: "kayman-db"
     env_file:
       - "instance/.env"
     image: "postgres:15"

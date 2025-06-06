@@ -18,7 +18,7 @@ app = FastAPI(
     contact={"name": "Tomy Hsieh", "url": "https://github.com/tomy0000000"},
     license_info={
         "name": "MIT",
-        "url": "https://github.com/tomy0000000/K-Backend/blob/main/LICENSE",
+        "url": "https://github.com/tomy0000000/kayman/blob/main/LICENSE",
     },
     generate_unique_id_function=custom_generate_unique_id,
 )

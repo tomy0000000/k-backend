@@ -15,12 +15,12 @@ class Settings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ENVIRONMENT: Literal["local", "staging", "production"] = "production"
 
-    PROJECT_NAME: str = "K"
-    POSTGRES_HOST: str = "k-backend-db"  # Default Docker Compose service name
+    PROJECT_NAME: str = "Kayman"
+    POSTGRES_HOST: str = "kayman-db"  # Default Docker Compose service name
     POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str = "k"
+    POSTGRES_USER: str = "k"  # TODO: Change this
     POSTGRES_PASSWORD: str
-    POSTGRES_DB: str = "k"
+    POSTGRES_DB: str = "k"  # TODO: Change this
 
     @computed_field  # type: ignore[prop-decorator]
     @property

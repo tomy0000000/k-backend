@@ -1,7 +1,7 @@
 [project]
-name = "k-backend"
+name = "kayman"
 version = "0.10.0"
-description = "The backend API server of K"
+description = "Kayman is the one-stop solution for personal finance"
 license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.12,<4.0.0"
@@ -24,8 +24,8 @@ dependencies = [
 ]
 
 [project.urls]
-repository = "https://github.com/tomy0000000/k-backend"
-documentation = "https://github.com/tomy0000000/k-backend/wiki"
+repository = "https://github.com/tomy0000000/kayman"
+documentation = "https://github.com/tomy0000000/kayman/wiki"
 
 [tool.poetry]
 package-mode = false

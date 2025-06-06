@@ -13,7 +13,7 @@ from k_backend.main import app
 
 @pytest.fixture(scope="function")
 def db_uri() -> Generator[str, None, None]:
-    db_file = f"/tmp/k-backend-test-{str(uuid4())}.db"
+    db_file = f"/tmp/kayman-test-{str(uuid4())}.db"
     uri = f"sqlite:///{db_file}"
     yield uri
 
