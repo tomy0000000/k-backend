@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Kayman"
     POSTGRES_HOST: str = "kayman-db"  # Default Docker Compose service name
     POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str = "k"  # TODO: Change this
+    POSTGRES_USER: str = "kayman"
     POSTGRES_PASSWORD: str
-    POSTGRES_DB: str = "k"  # TODO: Change this
+    POSTGRES_DB: str = "kayman"
 
     @computed_field  # type: ignore[prop-decorator]
     @property
