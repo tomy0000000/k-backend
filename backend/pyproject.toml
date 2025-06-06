@@ -45,11 +45,11 @@ pytest-cov = "^6.0.0"
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/config_files.html
 profile = "black"
-src_paths = ["k_backend"]
+src_paths = ["kayman"]
 
 [tool.pytest.ini_options]
 # https://docs.pytest.org/en/stable/reference/customize.html#configuration-file-formats
-addopts = "--capture=no --cov=k_backend --cov-report=term-missing --cov-report=xml --cov-report=html"
+addopts = "--capture=no --cov=kayman --cov-report=term-missing --cov-report=xml --cov-report=html"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -58,7 +58,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.mypy]
 # https://mypy.readthedocs.io/en/stable/config_file.html
 strict = true
-exclude = ["venv", ".venv", "alembic", "k_backend/tests"]
+exclude = ["venv", ".venv", "alembic", "kayman/tests"]
 
 [[tool.mypy.overrides]]
 # TODO: Remove this when factory boy supports typing

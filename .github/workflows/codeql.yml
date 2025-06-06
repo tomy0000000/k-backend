@@ -6,12 +6,12 @@ on:
       - "main"
       - "develop"
     paths:
-      - "backend/k_backend/**"
+      - "backend/kayman/**"
   pull_request:
     branches:
       - "develop"
     paths:
-      - "k_backend/**"
+      - "kayman/**"
 
 defaults:
   run:

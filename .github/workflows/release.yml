@@ -46,6 +46,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           short-description: ${{ github.event.repository.description }}
 
+  # TODO: Add this once we're stable enough
   # deployment:
   #   name: Deploy to Production
   #   runs-on: ubuntu-latest
@@ -61,7 +62,7 @@ jobs:
   #         key: ${{ secrets.KEY }}
   #         script_stop: true
   #         script: |
-  #           cd k_backend
-  #           docker pull tomy0000000/k_backend:latest
+  #           cd kayman
+  #           docker pull tomy0000000/kayman:latest
   #           docker-compose up --detach
-  #           docker network connect nginx_default k_backend_app
+  #           docker network connect nginx_default kayman_app

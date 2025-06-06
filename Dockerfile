@@ -1,6 +1,6 @@
 FROM python:3.12
 
-LABEL tech.tomy.docker.k.backend="0.10.0"
+LABEL tech.tomy.docker.kayman="0.10.0"
 LABEL maintainer="Tomy Hsieh @tomy0000000"
 
 WORKDIR /usr/src/kayman
@@ -20,4 +20,4 @@ RUN poetry config virtualenvs.create false && \
 COPY backend/ /usr/src/kayman
 
 # Run Application
-ENTRYPOINT [ "uvicorn", "k_backend.main:app", "--host", "0.0.0.0", "--port", "8000" ]
+ENTRYPOINT [ "uvicorn", "kayman.main:app", "--host", "0.0.0.0", "--port", "8000" ]
