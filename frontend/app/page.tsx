@@ -3,7 +3,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
-import { PaymentReadDetailed, readPaymentsPaymentsGet } from "@/lib/client"
+import { PaymentReadDetailed, readPayments } from "@/lib/client"
 import { useAuth } from "@/lib/context/AuthContext"
 import { useEffect, useState } from "react"
 
@@ -23,7 +23,7 @@ export default function CalendarApp() {
     const payment_date = date?.toLocaleDateString("en-CA") // 2025-01-01
 
     async function fetchPayments() {
-      const response = await readPaymentsPaymentsGet({
+      const response = await readPayments({
         client,
         query: { payment_date },
       })
@@ -80,7 +80,12 @@ export default function CalendarApp() {
             </p>
           )}
           {payments.map((payment) => {
-            const total = Number(payment.total)
+            const entriesTotal = payment.entries.reduce((sum, entry) => {
+              return sum + Number(entry.amount) * entry.quantity
+            }, 0)
+            const transferAmount = payment.transactions
+              .map((txn) => txn.amount)
+              .join(" / ")
             return (
               <div key={payment.id}>
                 <div className="flex flex-row justify-between text-sm">
@@ -91,8 +96,9 @@ export default function CalendarApp() {
                     </div>
                   </div>
                   <div className="flex items-center justify-center bg-red-500 text-white px-4 py-2 rounded-md">
-                    {payment.type === "Expense" && `-${total}`}
-                    {payment.type === "Income" && `+${total}`}
+                    {payment.type === "Expense" && `-${entriesTotal}`}
+                    {payment.type === "Income" && `+${entriesTotal}`}
+                    {payment.type === "Transfer" && transferAmount}
                   </div>
                 </div>
                 <Separator className="my-2" />

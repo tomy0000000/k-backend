@@ -68,6 +68,22 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "🤖 Create client",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "scripts/built_client.sh",
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ],
   "inputs": [

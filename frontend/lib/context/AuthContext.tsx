@@ -1,4 +1,4 @@
-import { loginTokenPost } from "@/lib/client"
+import { login as clientLogin } from "@/lib/client"
 import { Client, createClient } from "@hey-api/client-axios"
 import {
   createContext,
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: AuthContextProps) => {
     const client = createClient({ baseURL: host })
 
     // Try to authenticate with the new config
-    const response = await loginTokenPost({
+    const response = await clientLogin({
       client,
       body: { username, password },
     })
