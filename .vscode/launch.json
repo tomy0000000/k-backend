@@ -5,18 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Start Frontend Dev Server",
+      "name": "Start Frontend Dev",
       "request": "launch",
+      "type": "node",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/frontend",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": [
         "run",
         "dev"
       ],
-      "runtimeExecutable": "pnpm",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "type": "node",
-      "console": "integratedTerminal"
     }
   ]
 }
